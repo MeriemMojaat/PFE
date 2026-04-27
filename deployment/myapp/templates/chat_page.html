@@ -1,0 +1,513 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Assistant BH - Chat{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Base layout */
+    .chat-layout {
+        display: flex;
+        height: calc(100vh - 70px);
+        max-width: 1600px;
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        position: relative;
+    }
+
+    /* Sidebar – collapsible */
+    .sidebar {
+        width: 280px;
+        background: #f7f7f8;
+        border-right: none;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 12px;
+        transition: width 0.3s ease;
+        overflow-x: hidden;
+    }
+    .sidebar.collapsed {
+        width: 60px;
+    }
+    .sidebar.collapsed .new-chat-btn span,
+    .sidebar.collapsed .conversation-title,
+    .sidebar.collapsed .delete-conv {
+        display: none;
+    }
+    .sidebar.collapsed .new-chat-btn {
+        justify-content: center;
+        padding: 12px;
+    }
+
+    /* Sidebar toggle button */
+    .sidebar-toggle {
+        position: absolute;
+        left: 280px;
+        top: 20px;
+        background: #0a2b4e;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        z-index: 10;
+        transition: left 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+    .sidebar.collapsed + .sidebar-toggle {
+        left: 60px;
+    }
+
+    /* Main chat area */
+    .main-chat {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: white;
+    }
+
+    /* Rest of your existing CSS (unchanged) */
+    .new-chat-btn {
+        background: #0a2b4e;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        padding: 12px;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: background 0.2s;
+    }
+    .new-chat-btn:hover {
+        background: #1e3c72;
+    }
+    .conversations-list {
+        flex: 1;
+        overflow-y: auto;
+    }
+    .conversation-item {
+        padding: 12px;
+        margin-bottom: 4px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.9rem;
+        color: #1e293b;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .conversation-item:hover {
+        background: #e9ecef;
+    }
+    .conversation-item.active {
+        background: #e2e8f0;
+        font-weight: 500;
+    }
+    .conversation-title {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .delete-conv {
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: none;
+        padding: 0 4px;
+    }
+    .conversation-item:hover .delete-conv {
+        display: inline-block;
+    }
+    .delete-conv:hover {
+        color: #dc2626;
+    }
+    .chat-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        background: white;
+    }
+    .chat-header h2 {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: #0a2b4e;
+    }
+    .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+    .message {
+        display: flex;
+        flex-direction: column;
+        max-width: 80%;
+    }
+    .user-message {
+        align-self: flex-end;
+    }
+    .assistant-message {
+        align-self: flex-start;
+    }
+    .message-content {
+        padding: 12px 18px;
+        border-radius: 24px;
+        line-height: 1.5;
+        font-size: 0.95rem;
+    }
+    .user-message .message-content {
+        background: #0a2b4e;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    .assistant-message .message-content {
+        background: #f1f3f4;
+        color: #1e293b;
+        border-bottom-left-radius: 4px;
+    }
+    .message-time {
+        font-size: 0.7rem;
+        color: #94a3b8;
+        margin-top: 4px;
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+    .user-message .message-time {
+        text-align: right;
+    }
+    .input-area {
+        padding: 20px 24px;
+        border-top: 1px solid #f0f0f0;
+        background: white;
+        display: flex;
+        gap: 12px;
+    }
+    .input-area input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 40px;
+        font-size: 0.95rem;
+        outline: none;
+    }
+    .input-area input:focus {
+        border-color: #0a2b4e;
+        box-shadow: 0 0 0 2px rgba(10,43,78,0.1);
+    }
+    .input-area button {
+        background: #0a2b4e;
+        color: white;
+        border: none;
+        border-radius: 40px;
+        padding: 0 24px;
+        font-size: 0.95rem;
+        cursor: pointer;
+    }
+    .input-area button:hover {
+        background: #1e3c72;
+    }
+    .typing-indicator {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        padding: 8px 16px;
+        background: #f1f3f4;
+        border-radius: 24px;
+        width: fit-content;
+    }
+    .typing-indicator span {
+        width: 6px;
+        height: 6px;
+        background: #94a3b8;
+        border-radius: 50%;
+        animation: bounce 1.4s infinite;
+    }
+    @keyframes bounce {
+        0%, 60%, 100% { transform: translateY(0); }
+        30% { transform: translateY(-4px); }
+    }
+    @media (max-width: 768px) {
+        .sidebar {
+            position: absolute;
+            z-index: 20;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar.collapsed {
+            width: 0;
+        }
+        .sidebar-toggle {
+            left: 280px;
+        }
+        .sidebar.collapsed + .sidebar-toggle {
+            left: 10px;
+        }
+        .message {
+            max-width: 90%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chat-layout">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <button class="new-chat-btn" id="newChatBtn">+ <span>Nouvelle conversation</span></button>
+        <div class="conversations-list" id="conversationsList">
+            {% for conv in conversations %}
+            <div class="conversation-item" data-id="{{ conv.id }}">
+                <span class="conversation-title">{{ conv.title|default:"Nouvelle conversation" }}</span>
+                <button class="delete-conv" data-id="{{ conv.id }}">🗑️</button>
+            </div>
+            {% empty %}
+            <div style="text-align: center; color: #94a3b8; padding: 20px;">Aucune conversation</div>
+            {% endfor %}
+        </div>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+
+    <!-- Main chat area -->
+    <div class="main-chat">
+        <div class="chat-header">
+            <h2>Assistant BH</h2>
+        </div>
+        <div class="messages-container" id="messagesContainer">
+            <div class="message assistant-message">
+                <div class="message-content">
+                    Bonjour ! Je suis l'assistant BH. Posez-moi une question sur nos produits (cartes, crédits, assurances, etc.).
+                </div>
+                <div class="message-time">Assistant • maintenant</div>
+            </div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="chatInput" placeholder="Votre question..." autofocus>
+            <button id="sendBtn">Envoyer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Remove the floating chat button from base.html on this page
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatButton = document.getElementById('chatButton');
+        if (chatButton) chatButton.remove();
+    });
+
+    // CSRF token helper
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    let currentConversationId = null;
+    const messagesContainer = document.getElementById('messagesContainer');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const newChatBtn = document.getElementById('newChatBtn');
+    const conversationsList = document.getElementById('conversationsList');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    // Toggle sidebar collapse
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
+
+    // Load a conversation's messages
+    async function loadConversation(convId) {
+        currentConversationId = convId;
+        const response = await fetch(`/api/conversations/${convId}/`);
+        const data = await response.json();
+        messagesContainer.innerHTML = '';
+        if (data.messages.length === 0) {
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'message assistant-message';
+            welcomeDiv.innerHTML = `<div class="message-content">Bonjour ! Je suis l'assistant BH. Posez-moi une question sur nos produits.</div><div class="message-time">Assistant • maintenant</div>`;
+            messagesContainer.appendChild(welcomeDiv);
+        } else {
+            for (let msg of data.messages) {
+                addMessageToUI(msg.content, msg.role === 'user');
+            }
+        }
+        // Highlight active conversation in sidebar
+        document.querySelectorAll('.conversation-item').forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.id == convId) item.classList.add('active');
+        });
+    }
+
+    function addMessageToUI(text, isUser) {
+        const div = document.createElement('div');
+        div.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+        div.innerHTML = `<div class="message-content">${escapeHtml(text)}</div><div class="message-time">${isUser ? 'Vous' : 'Assistant'} • ${timeStr}</div>`;
+        messagesContainer.appendChild(div);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message assistant-message';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+        messagesContainer.appendChild(typingDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function hideTyping() {
+        const typing = document.getElementById('typingIndicator');
+        if (typing) typing.remove();
+    }
+
+    async function sendMessage() {
+        const question = chatInput.value.trim();
+        if (!question || !currentConversationId) return;
+        addMessageToUI(question, true);
+        chatInput.value = '';
+        showTyping();
+        try {
+            const response = await fetch('/ask/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ question: question, conversation_id: currentConversationId })
+            });
+            const data = await response.json();
+            hideTyping();
+            if (data.answer) {
+                addMessageToUI(data.answer, false);
+            } else {
+                addMessageToUI("Désolé, une erreur s'est produite.", false);
+            }
+            // Update the conversation title in sidebar without reloading the page
+            await updateConversationTitle(currentConversationId);
+        } catch (err) {
+            hideTyping();
+            addMessageToUI("Erreur de connexion.", false);
+        }
+    }
+
+    async function updateConversationTitle(convId) {
+        // Fetch updated conversation list from the server (reusing the page HTML is heavy; better to have a dedicated API)
+        // For simplicity, we'll fetch the chat page again and extract the title.
+        // Alternatively, you could create an API endpoint `/api/conversation/<id>/title` but to avoid extra code, we use this.
+        const response = await fetch('/chat/');
+        const htmlText = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, 'text/html');
+        const newConvItem = doc.querySelector(`.conversation-item[data-id="${convId}"]`);
+        if (newConvItem) {
+            const newTitle = newConvItem.querySelector('.conversation-title').innerText;
+            const oldItem = document.querySelector(`.conversation-item[data-id="${convId}"]`);
+            if (oldItem) {
+                oldItem.querySelector('.conversation-title').innerText = newTitle;
+            }
+        }
+    }
+
+    async function newConversation() {
+        const response = await fetch('/api/new_conversation/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            }
+        });
+        const data = await response.json();
+        if (data.conversation_id) {
+            const newItem = document.createElement('div');
+            newItem.className = 'conversation-item';
+            newItem.dataset.id = data.conversation_id;
+            newItem.innerHTML = `<span class="conversation-title">Nouvelle conversation</span><button class="delete-conv" data-id="${data.conversation_id}">🗑️</button>`;
+            conversationsList.appendChild(newItem);
+            loadConversation(data.conversation_id);
+            attachDeleteHandlers();
+        }
+    }
+
+    function attachDeleteHandlers() {
+        document.querySelectorAll('.delete-conv').forEach(btn => {
+            btn.removeEventListener('click', handleDelete);
+            btn.addEventListener('click', handleDelete);
+        });
+    }
+
+    async function handleDelete(e) {
+        e.stopPropagation();
+        const convId = e.currentTarget.dataset.id;
+        if (confirm('Supprimer cette conversation ?')) {
+            await fetch(`/api/delete_conversation/${convId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                }
+            });
+            const item = document.querySelector(`.conversation-item[data-id="${convId}"]`);
+            if (item) item.remove();
+            if (currentConversationId == convId) {
+                newConversation();
+            }
+        }
+    }
+
+    // Event listeners
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    newChatBtn.addEventListener('click', newConversation);
+
+    conversationsList.addEventListener('click', (e) => {
+        const convItem = e.target.closest('.conversation-item');
+        if (convItem && !e.target.classList.contains('delete-conv')) {
+            const convId = convItem.dataset.id;
+            loadConversation(convId);
+        }
+    });
+
+    attachDeleteHandlers();
+
+    // Load the first conversation if any, otherwise create a new one
+    const firstConv = document.querySelector('.conversation-item');
+    if (firstConv) {
+        loadConversation(firstConv.dataset.id);
+    } else {
+        newConversation();
+    }
+</script>
+{% endblock %}

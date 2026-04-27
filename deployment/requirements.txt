@@ -1,0 +1,10 @@
+pdfplumber 
+fuzzywuzzy 
+python-Levenshtein 
+numpy
+requests
+django
+rapidfuzz
+langdetect
+pandas
+openpyxl

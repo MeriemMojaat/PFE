@@ -1,0 +1,19 @@
+OUTLIER TREATMENT REPORT
+========================
+
+Age: capped between 18 and 100. Values >120 removed.
+Final age range: 18 - 89
+
+Transaction amount: capped at 99.9th percentile (winsorized).
+Capping threshold: 1500.00
+Number of capped transactions: 86
+Original max amount: 4500.00
+Capped max amount: 1500.00
+
+Negative amounts: removed.
+All other outliers are preserved (no removal).
+
+Remaining missing values after imputation:
+Clients: 0 missing
+Merchants: 0 missing
+Operations: 0 missing

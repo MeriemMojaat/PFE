@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Accueil - BH Bank{% endblock %}
+
+{% block content %}
+
+
+<section class="hero">
+    <div class="hero-pattern"></div>
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <div class="badge"><span>Plus de 50 ans d'excellence</span></div>
+                <h1 class="hero-title">BH Bank : <span class="text-red">50 ans</span> au service de l'économie tunisienne</h1>
+                <p class="hero-description">Forte d'un vécu de plus de 50 ans d'existence, BH Bank est aujourd'hui considérée comme l'un des principaux acteurs de l'activité économique en Tunisie.</p>
+                <div class="hero-buttons">
+                    
+                    <a href="{% url 'presentation' %}" class="btn btn-outline btn-lg">En savoir plus</a>
+                </div>
+                <div class="stats">
+                    <div class="stat-item"><div class="stat-value">600K+</div><div class="stat-label">Logements financés</div></div>
+                    <div class="stat-item"><div class="stat-value">151</div><div class="stat-label">Agences</div></div>
+                    <div class="stat-item"><div class="stat-value">2000+</div><div class="stat-label">Collaborateurs</div></div>
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYW5rJTIwdHVuaXNpYXR8ZW58MHx8fHwxNzQwMDI1Njg2fDA&ixlib=rb-4.1.0&q=80&w=1080" alt="BH Bank">
+                </div>
+                <div class="hero-glow"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Présentation de BH Bank</h2>
+            <p class="section-description">Découvrez l'histoire et les valeurs qui font de BH Bank un acteur majeur du paysage financier tunisien</p>
+        </div>
+        <div class="presentation-grid">
+            <div class="presentation-content">
+                <p class="presentation-text">Anciennement Caisse d'Epargne Logement « CNEL », fondée en 1974, BH Bank a contribué pleinement à l'accès du Tunisien au « logement décent » et ce via le financement de plus de 600.000 logements, soit presque 30% du patrimoine foncier Tunisien.</p>
+                <p class="presentation-text">Transformée en banque depuis 1989, BH Bank s'est dotée d'une stratégie de proximité avec sa clientèle à travers un réseau de 151 agences couvrant tout le territoire tunisien.</p>
+                <div class="presentation-highlights">
+                    <div class="highlight-item"><span class="highlight-year">2008</span><span class="highlight-desc">Meilleure banque africaine en crédits immobiliers</span></div>
+                    <div class="highlight-item"><span class="highlight-year">2019</span><span class="highlight-desc">Meilleure Banque Régionale d'Afrique du Nord</span></div>
+                    <div class="highlight-item"><span class="highlight-year">2023</span><span class="highlight-desc">Certification MSI 20000</span></div>
+                </div>
+                <a href="{% url 'presentation' %}" class="btn btn-secondary voir-plus-btn">Voir plus<svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a>
+            </div>
+            <div class="presentation-stats">
+                <div class="stat-card"><div class="stat-number">8.75MDT</div><div class="stat-text">Ressources clientèle</div></div>
+                <div class="stat-card"><div class="stat-number">4ème</div><div class="stat-text">Rang des banques tunisiennes</div></div>
+                <div class="stat-card"><div class="stat-number">12.4%</div><div class="stat-text">Part de marché des crédits</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="features-header">
+            <h2 class="section-title">Notre Histoire</h2>
+            <p class="section-description">BH Bank défie tous les temps… défie tous les records…</p>
+        </div>
+        <div class="timeline-preview">
+            <div class="timeline-item"><div class="timeline-year">1974</div><div class="timeline-content"><h3>Création de la Caisse Nationale d'Epargne Logement</h3><p>Adoption de la loi sur la promotion immobilière et mise en place du 1er livret d'épargne logement</p></div></div>
+            <div class="timeline-item"><div class="timeline-year">1989</div><div class="timeline-content"><h3>Transformation en Banque de l'Habitat</h3><p>Démarrage de l'activité bancaire et initiation aux nouveaux métiers de la banque</p></div></div>
+            <div class="timeline-item"><div class="timeline-year">1993</div><div class="timeline-content"><h3>Constitution en groupe</h3><p>D'une logique de banque commerciale vers une dynamique de groupe</p></div></div>
+            <div class="timeline-item"><div class="timeline-year">2019</div><div class="timeline-content"><h3>Transformation en BH Bank</h3><p>Nouvelle identité visuelle et nouvelle dynamique de groupe</p></div></div>
+        </div>
+        <div class="text-center"><a href="{% url 'histoire' %}" class="btn btn-secondary voir-plus-btn">Voir l'histoire complet<svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div>
+    </div>
+</section>
+
+<section class="services">
+    <div class="container">
+        <div class="section-header"><h2 class="section-title">Nous Connaître</h2><p class="section-description">Découvrez nos valeurs, notre engagement et notre gouvernance</p></div>
+        <div class="values-grid">
+            <div class="value-card"><div class="value-icon">🤝</div><h3>Confiance</h3><p>Nous prônons la Confiance en notre expertise, partagée avec nos clients, partenaires et collaborateurs.</p></div>
+            <div class="value-card"><div class="value-icon">💪</div><h3>Travail & Leadership</h3><p>Améliorer le rendement et la productivité en plaçant la Satisfaction Client au cœur de notre mission.</p></div>
+            <div class="value-card"><div class="value-icon">❤️</div><h3>Respect</h3><p>Chaque collaborateur est respecté dans son intégrité physique et morale.</p></div>
+            <div class="value-card"><div class="value-icon">⚖️</div><h3>Equité</h3><p>Lutter contre toute forme de discrimination entre genres, régions, affectation est notre devise.</p></div>
+        </div>
+        <div class="text-center"><a href="{% url 'nous_connaitre' %}" class="btn btn-secondary voir-plus-btn">En savoir plus sur nous<svg class="icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></a></div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="features-header"><h2 class="section-title">Le Groupe BH</h2><p class="section-description">Un groupe intégré autour des métiers de la finance</p></div>
+        <div class="group-grid">
+            <div class="group-item">BH Bank</div><div class="group-item">BH Assurance</div><div class="group-item">BH Leasing</div><div class="group-item">BH Invest</div>
+            <div class="group-item">BH Immo</div><div class="group-item">BH Equity</div><div class="group-item">BH Recouvrement</div><div class="group-item">BH Capital</div>
+            <div class="group-item">BH Sicaf</div><div class="group-item">BH Sicav</div><div class="group-item">Stimec</div>
+        </div>
+    </div>
+</section>
+
+
+
+
+{% endblock %}

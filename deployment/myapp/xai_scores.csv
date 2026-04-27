@@ -1,0 +1,4 @@
+    client_id,product_name,factual_score,relevance_score,clarity_score,hallucination_score,overall_score,judge_feedback,evaluated_at
+    C000001,La carte BH GOLD Internationale,9,7,9,10,8.5,"Good job! The explanation is mostly factual and relevant to the client's profile. However, it could be more specific about how the product benefits align with the client's profession as a pharmacist.",2026-04-21 17:08:58.586847
+    C000001,Le Pack : BH Access,9,7,9,10,8.5,"Good job! The explanation is mostly factual and relevant to the product, but could be improved by mentioning more specific conditions of the product.",2026-04-21 17:09:17.098743
+    C000001,Le credit Direct,9,7,9,10,8.5,"Good job! The explanation is mostly factual and relevant to the product, but could be improved by mentioning specific conditions of the credit.",2026-04-21 17:09:34.351337

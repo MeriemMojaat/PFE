@@ -1,0 +1,335 @@
+{
+  "total": 41,
+  "found": 41,
+  "not_found": 0,
+  "products": [
+    {
+      "number": 1,
+      "name": "LA CARTE COOL",
+      "category": "1 LES CARTES NATIONALES",
+      "subcategory": null,
+      "page": 4,
+      "content_header": "LA CARTE COOL"
+    },
+    {
+      "number": 2,
+      "name": "LA CARTE GO",
+      "category": "1 LES CARTES NATIONALES",
+      "subcategory": null,
+      "page": 5,
+      "content_header": "LA CARTE GO"
+    },
+    {
+      "number": 3,
+      "name": "La carte CIB",
+      "category": "1 LES CARTES NATIONALES",
+      "subcategory": null,
+      "page": 6,
+      "content_header": "LA CARTE CIB"
+    },
+    {
+      "number": 4,
+      "name": "La carte Yasmine",
+      "category": "1 LES CARTES NATIONALES",
+      "subcategory": null,
+      "page": 7,
+      "content_header": "LA CARTE YASMINE"
+    },
+    {
+      "number": 5,
+      "name": "LES CARTES VISA ET MASTERCARD CLASSIC NATIONALES",
+      "category": "1 LES CARTES NATIONALES",
+      "subcategory": null,
+      "page": 8,
+      "content_header": "LES CARTES VISA ET MASTERCARD CLASSIC NATIONALES"
+    },
+    {
+      "number": 6,
+      "name": "La carte BH GOLD Nationale",
+      "category": "1 LES CARTES NATIONALES",
+      "subcategory": null,
+      "page": 9,
+      "content_header": "LA CARTE BH GOLD NATIONALE"
+    },
+    {
+      "number": 1,
+      "name": "LES CARTES VISA ET MASTERCARD CLASSIC INTERNATIONALES",
+      "category": "2 LES CARTES INTERNATIONALES",
+      "subcategory": null,
+      "page": 11,
+      "content_header": "LES CARTES VISA ET MASTERCARD CLASSIC INTERNATIONALES"
+    },
+    {
+      "number": 2,
+      "name": "La carte BH TRAVEL",
+      "category": "2 LES CARTES INTERNATIONALES",
+      "subcategory": null,
+      "page": 12,
+      "content_header": "LA CARTE BH TRAVEL"
+    },
+    {
+      "number": 3,
+      "name": "La carte BH SCOLARITE",
+      "category": "2 LES CARTES INTERNATIONALES",
+      "subcategory": null,
+      "page": 13,
+      "content_header": "LA CARTE BH SCOLARITE"
+    },
+    {
+      "number": 4,
+      "name": "La carte BH Technologie",
+      "category": "2 LES CARTES INTERNATIONALES",
+      "subcategory": null,
+      "page": 14,
+      "content_header": "LA CARTE BH TECHNOLOGIE"
+    },
+    {
+      "number": 5,
+      "name": "La carte BH GOLD Internationale",
+      "category": "2 LES CARTES INTERNATIONALES",
+      "subcategory": null,
+      "page": 15,
+      "content_header": "LA CARTE BH GOLD INTERNATIONALE"
+    },
+    {
+      "number": 1,
+      "name": "Le serveur vocal BH TEL",
+      "category": "LES SERVICES BANCAIRES À DISTANCE",
+      "subcategory": null,
+      "page": 17,
+      "content_header": " LE SERVEUR VOCAL BH TEL"
+    },
+    {
+      "number": 2,
+      "name": "Le BH SMS",
+      "category": "LES SERVICES BANCAIRES À DISTANCE",
+      "subcategory": null,
+      "page": 18,
+      "content_header": " LE BH SMS"
+    },
+    {
+      "number": 3,
+      "name": "La BH Recharge",
+      "category": "LES SERVICES BANCAIRES À DISTANCE",
+      "subcategory": null,
+      "page": 19,
+      "content_header": " LA BH RECHARGE"
+    },
+    {
+      "number": 4,
+      "name": "Le BH Net Mobile",
+      "category": "LES SERVICES BANCAIRES À DISTANCE",
+      "subcategory": null,
+      "page": 20,
+      "content_header": " LE BH NET MOBILE BH NETMOBILE"
+    },
+    {
+      "number": 5,
+      "name": "Le certifcat electronique de paiement",
+      "category": "LES SERVICES BANCAIRES À DISTANCE",
+      "subcategory": null,
+      "page": 22,
+      "content_header": " LE CERTIFICAT"
+    },
+    {
+      "number": 1,
+      "name": "Le Pack : BH Access",
+      "category": "LES OFFRES PACKAGEES",
+      "subcategory": null,
+      "page": 23,
+      "content_header": " LE PACK : BH ACCESS REFERENCE : Note de procédure n° 26/2015"
+    },
+    {
+      "number": 2,
+      "name": "Le Pack : BH Select",
+      "category": "LES OFFRES PACKAGEES",
+      "subcategory": null,
+      "page": 24,
+      "content_header": " LE PACK : BH SELECT REFERENCE : Note de procédure n° 26/2015"
+    },
+    {
+      "number": 3,
+      "name": "Le Pack : BH Elite",
+      "category": "LES OFFRES PACKAGEES",
+      "subcategory": null,
+      "page": 25,
+      "content_header": " LE PACK : BH ELITE REFERENCE : Note de procédure n° 27/2015"
+    },
+    {
+      "number": 4,
+      "name": "Le Pack : Senior",
+      "category": "LES OFFRES PACKAGEES",
+      "subcategory": null,
+      "page": 26,
+      "content_header": " LE PACK : SENIOR REFERENCE : Note de service n° 24/2016"
+    },
+    {
+      "number": 5,
+      "name": "Le Pack : BLEDNA",
+      "category": "LES OFFRES PACKAGEES",
+      "subcategory": null,
+      "page": 28,
+      "content_header": " LE PACK : BLEDNA REFERENCE : Note de service n° 32/2016"
+    },
+    {
+      "number": 6,
+      "name": "Le Pack : SMART",
+      "category": "LES OFFRES PACKAGEES",
+      "subcategory": null,
+      "page": 30,
+      "content_header": " LE PACK : SMART REFERENCE : Note de service n° 15/2017"
+    },
+    {
+      "number": 1,
+      "name": "Dhamen",
+      "category": "LES PRODUITS DE BANCASSURANCE",
+      "subcategory": null,
+      "page": 31,
+      "content_header": " DHAMEN REFERENCE"
+    },
+    {
+      "number": 2,
+      "name": "Dhamen Compte",
+      "category": "LES PRODUITS DE BANCASSURANCE",
+      "subcategory": null,
+      "page": 33,
+      "content_header": " DHAMEN COMPTE REFERENCE :"
+    },
+    {
+      "number": 3,
+      "name": "Dhamen Epargne Retraite",
+      "category": "LES PRODUITS DE BANCASSURANCE",
+      "subcategory": null,
+      "page": 35,
+      "content_header": " DHAMEN EPARGNE RETRAITE REFERENCE :"
+    },
+    {
+      "number": 4,
+      "name": "Assur Senior",
+      "category": "LES PRODUITS DE BANCASSURANCE",
+      "subcategory": null,
+      "page": 37,
+      "content_header": "000 3 000 Niveau 2* 150"
+    },
+    {
+      "number": 5,
+      "name": "ASSISTANCE PROTECTION JURIDIQUE « BLEDNA SERENITE »",
+      "category": "LES PRODUITS DE BANCASSURANCE",
+      "subcategory": null,
+      "page": 39,
+      "content_header": "(manually corrected)"
+    },
+    {
+      "number": 6,
+      "name": "ASSURVOYAGE",
+      "category": "LES PRODUITS DE BANCASSURANCE",
+      "subcategory": null,
+      "page": 41,
+      "content_header": " ASSURVOYAGE REFERENCE Note de service n°14/2017"
+    },
+    {
+      "number": 1,
+      "name": "Le Plan Epargne Logement Classique",
+      "category": "LES PRODUITS HABITAT",
+      "subcategory": null,
+      "page": 43,
+      "content_header": " LE PLAN EPARGNE LOGEMENT CLASSIQUE REFERENCE :"
+    },
+    {
+      "number": 2,
+      "name": "Le Plan Epargne logement El Jedid",
+      "category": "LES PRODUITS HABITAT",
+      "subcategory": null,
+      "page": 46,
+      "content_header": " LE PLAN EPARGNE LOGEMENT EL JEDID REFERENCE :"
+    },
+    {
+      "number": 3,
+      "name": "Le credit Direct",
+      "category": "LES PRODUITS HABITAT",
+      "subcategory": null,
+      "page": 49,
+      "content_header": " LECREDITDIRECT REFERENCE :"
+    },
+    {
+      "number": 4,
+      "name": "Le credit FOPROLOS",
+      "category": "LES PRODUITS HABITAT",
+      "subcategory": null,
+      "page": 50,
+      "content_header": " LE CREDIT FOPROLOS REFERENCE Loi n°77-54 du 03/08/77"
+    },
+    {
+      "number": 5,
+      "name": "Le Credit autofinancement 1er logement",
+      "category": "LES PRODUITS HABITAT",
+      "subcategory": null,
+      "page": 53,
+      "content_header": " LE CREDIT AUTOFINANCEMENT 1er LOGEMENT"
+    },
+    {
+      "number": 1,
+      "name": "Le crédit BH Auto",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 54,
+      "content_header": " LE CREDIT BH AUTO REFERENCE :"
+    },
+    {
+      "number": 2,
+      "name": "Le prêt personnel",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 55,
+      "content_header": " LE PRÊT PERSONNEL REFERENCE :"
+    },
+    {
+      "number": 3,
+      "name": "Le crédit aménagement à Moyen terme",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 56,
+      "content_header": " LE CREDIT AMENAGEMENT A MOYEN TERME"
+    },
+    {
+      "number": 4,
+      "name": "Le prêt universitaire",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 57,
+      "content_header": " LE PRET UNIVERSITAIRE REFERENCE :"
+    },
+    {
+      "number": 5,
+      "name": "Le crédit achat ordinateur",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 58,
+      "content_header": " LE CREDIT ACHAT ORDINATEUR REFERENCE :"
+    },
+    {
+      "number": 6,
+      "name": "Le plan épargne études",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 59,
+      "content_header": " LE PLAN EPARGNE ETUDES REFERENCE"
+    },
+    {
+      "number": 7,
+      "name": "Le plan Epargne BH Capital Plus",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 60,
+      "content_header": " LE PLAN EPARGNE BH CAPITAL PLUS REFERENCE :"
+    },
+    {
+      "number": 8,
+      "name": "Le credit contre nantissement CEA",
+      "category": "LES CREDITS AUX PARTICULIERS",
+      "subcategory": null,
+      "page": 62,
+      "content_header": " LE CREDIT CONTRE NANTISSEMENT CEA REFERENCE :"
+    }
+  ]
+}

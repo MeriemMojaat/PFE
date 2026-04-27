@@ -1,0 +1,451 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Recommandations Clients - BH Bank{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Additional styles for recommendations page */
+    .recommendation-search {
+        background: #f4f7fc;
+        padding: 60px 0;
+    }
+    .search-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        padding: 30px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .search-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+    }
+    .search-group input {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+    .search-group button {
+        background: #0a2b4e;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.2s;
+    }
+    .search-group button:hover {
+        background: #1e3c72;
+    }
+    .client-info {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        padding: 20px;
+        margin-top: 30px;
+    }
+    .client-info h3 {
+        color: #0a2b4e;
+        margin-bottom: 15px;
+        border-left: 4px solid #E70023;
+        padding-left: 15px;
+    }
+    .client-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    .client-detail-item {
+        background: #f4f7fc;
+        padding: 10px 15px;
+        border-radius: 8px;
+    }
+    .client-detail-item strong {
+        color: #0a2b4e;
+        display: block;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .client-detail-item span {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+    .recommendations-section {
+        padding: 40px 0;
+    }
+    .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+    .recommendation-card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+    .recommendation-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 30px rgba(0,0,0,0.1);
+    }
+    .recommendation-header {
+        background: #0a2b4e;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .recommendation-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    .recommendation-score {
+        background: #E70023;
+        padding: 5px 12px;
+        border-radius: 30px;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    .recommendation-body {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .recommendation-explanation {
+        color: #333;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+    .feedback-buttons {
+        margin-top: 15px;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        border-top: 1px solid #eee;
+        padding-top: 12px;
+    }
+    .thumbs-up, .thumbs-down {
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        padding: 5px 12px;
+        border-radius: 20px;
+        transition: background 0.2s;
+    }
+    .thumbs-up:hover { background: #e6f4ea; }
+    .thumbs-down:hover { background: #fce4e4; }
+    .feedback-comment {
+        width: 100%;
+        margin-top: 8px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        display: none;
+    }
+    .feedback-comment.active {
+        display: block;
+    }
+    .no-results {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 16px;
+        margin-top: 30px;
+    }
+    .loading {
+        text-align: center;
+        padding: 40px;
+        display: none;
+    }
+    .loading.active {
+        display: block;
+    }
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #E70023;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="recommendation-search">
+    <div class="container">
+        <div class="search-card">
+            <h2 style="text-align: center; color: #0a2b4e;">🔍 Recommandations produits</h2>
+            <p style="text-align: center; color: #555;">Recherchez un client par son nom ou identifiant</p>
+            <div class="search-group">
+                <input type="text" id="searchInput" placeholder="Nom ou ID (ex: C000001)" autocomplete="off">
+                <button id="searchBtn">Rechercher</button>
+            </div>
+            <p style="text-align: center; color: #555; font-size: 0.85rem;">Vous pouvez rechercher par nom ou par identifiant client (ex: C000001).</p>
+            <div id="searchResults" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+</section>
+
+<div class="loading" id="loadingIndicator">
+    <div class="spinner"></div>
+    <p>Chargement des recommandations...</p>
+</div>
+
+<section id="resultsSection" style="display: none;">
+    <div class="container">
+        <div id="clientInfo"></div>
+        <div class="recommendations-section">
+            <h2 class="section-title" style="text-align: center;">💡 Recommandations personnalisées</h2>
+            <div id="recommendationsList" class="recommendations-grid"></div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const searchResultsDiv = document.getElementById('searchResults');
+    const resultsSection = document.getElementById('resultsSection');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    const clientInfoDiv = document.getElementById('clientInfo');
+    const recommendationsList = document.getElementById('recommendationsList');
+
+    let currentClientId = null;
+
+    async function searchClients() {
+        const query = searchInput.value.trim();
+        if (!query) {
+            searchResultsDiv.innerHTML = '<p class="error-message">Veuillez entrer un nom ou un identifiant.</p>';
+            return;
+        }
+        searchResultsDiv.innerHTML = '<div class="loading" style="display:block;"><div class="spinner"></div> Recherche...</div>';
+        try {
+            const response = await fetch(`/recommend/search/?q=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            if (data.results && data.results.length > 0) {
+                let html = '<div style="margin-top: 15px;"><h3>Clients trouvés :</h3><ul style="list-style: none; padding: 0;">';
+                data.results.forEach(client => {
+                    html += `<li style="background: #f4f7fc; margin-bottom: 10px; padding: 12px; border-radius: 8px; cursor: pointer;" 
+                               onclick="selectClient('${client.client_id}')">
+                                <strong>${escapeHtml(client.full_name)}</strong> (${client.client_id})<br>
+                                <small>${client.age} ans | ${escapeHtml(client.job_position || 'N/A')} | Segment ${client.rfm_segment}</small>
+                            </li>`;
+                });
+                html += '</ul></div>';
+                searchResultsDiv.innerHTML = html;
+            } else {
+                searchResultsDiv.innerHTML = '<p class="error-message">Aucun client trouvé.</p>';
+            }
+        } catch (err) {
+            searchResultsDiv.innerHTML = '<p class="error-message">Erreur lors de la recherche.</p>';
+        }
+    }
+
+    async function selectClient(clientId) {
+        currentClientId = clientId;
+        searchResultsDiv.innerHTML = '';
+        resultsSection.style.display = 'block';
+        loadingIndicator.classList.add('active');
+        clientInfoDiv.innerHTML = '';
+        recommendationsList.innerHTML = '';
+
+        try {
+            const profileResp = await fetch(`/recommend/client-info/${clientId}/`);
+            if (profileResp.ok) {
+                const profile = await profileResp.json();
+                displayClientInfo(profile);
+            } else {
+                clientInfoDiv.innerHTML = `<div class="client-info"><h3>Client ${clientId}</h3><p>Informations détaillées non disponibles.</p></div>`;
+            }
+            const recResp = await fetch(`/recommend/client/${clientId}/`);
+            if (recResp.ok) {
+                const recData = await recResp.json();
+                if (recData.recommendations && recData.recommendations.length > 0) {
+                    displayRecommendations(recData.recommendations, clientId);
+                } else {
+                    recommendationsList.innerHTML = '<div class="no-results">Aucune recommandation disponible pour ce client.</div>';
+                }
+            } else {
+                recommendationsList.innerHTML = '<div class="no-results">Erreur lors du chargement des recommandations.</div>';
+            }
+        } catch (err) {
+            console.error(err);
+            recommendationsList.innerHTML = '<div class="no-results">Erreur de connexion au serveur.</div>';
+        } finally {
+            loadingIndicator.classList.remove('active');
+        }
+    }
+
+    function displayClientInfo(profile) {
+        const spending = profile.spending_capacity ? parseFloat(profile.spending_capacity).toFixed(2) + ' TND' : 'N/A';
+        const html = `
+            <div class="client-info">
+                <h3>👤 Profil client</h3>
+                <div class="client-details">
+                    <div class="client-detail-item"><strong>Nom</strong><span>${escapeHtml(profile.full_name || 'N/A')}</span></div>
+                    <div class="client-detail-item"><strong>Âge</strong><span>${profile.age || 'N/A'}</span></div>
+                    <div class="client-detail-item"><strong>Situation</strong><span>${escapeHtml(profile.marital_status || 'N/A')}</span></div>
+                    <div class="client-detail-item"><strong>Profession</strong><span>${escapeHtml(profile.job_position || 'N/A')}</span></div>
+                    <div class="client-detail-item"><strong>Segment RFM</strong><span>${escapeHtml(profile.rfm_segment || 'N/A')}</span></div>
+                    <div class="client-detail-item"><strong>Capacité d'épargne</strong><span>${spending}</span></div>
+                </div>
+            </div>
+        `;
+        clientInfoDiv.innerHTML = html;
+    }
+
+    function displayRecommendations(recommendations, clientId) {
+        let html = '';
+        recommendations.forEach(rec => {
+            html += `
+                <div class="recommendation-card" data-product="${escapeHtml(rec.product_name)}">
+                    <div class="recommendation-header">
+                        <span class="recommendation-name">${escapeHtml(rec.product_name)}</span>
+                        <span class="recommendation-score">${rec.score}/10</span>
+                    </div>
+                    <div class="recommendation-body">
+                        <div class="recommendation-explanation">${escapeHtml(rec.explanation)}</div>
+                        <div class="feedback-buttons">
+                            <button class="thumbs-up" data-rating="1">👍 Utile</button>
+                            <button class="thumbs-down" data-rating="0">👎 Pas utile</button>
+                            <input type="text" class="feedback-comment" placeholder="Votre commentaire (optionnel)">
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        recommendationsList.innerHTML = html;
+        attachFeedbackListeners(clientId);
+    }
+
+    function attachFeedbackListeners(clientId) {
+        document.querySelectorAll('.thumbs-up, .thumbs-down').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const rating = parseInt(btn.dataset.rating);
+                const card = btn.closest('.recommendation-card');
+                const productName = card.dataset.product;
+                const commentInput = card.querySelector('.feedback-comment');
+                
+                // For thumbs-down: show comment input if not already shown
+                if (rating === 0 && commentInput.style.display !== 'block') {
+                    commentInput.style.display = 'block';
+                    commentInput.focus();
+
+                    // Create temporary send button
+                    const sendBtn = document.createElement('button');
+                    sendBtn.textContent = 'Envoyer';
+                    sendBtn.style.marginLeft = '8px';
+                    sendBtn.style.padding = '4px 12px';
+                    sendBtn.style.borderRadius = '4px';
+                    sendBtn.style.border = '1px solid #0a2b4e';
+                    sendBtn.style.background = '#0a2b4e';
+                    sendBtn.style.color = 'white';
+                    sendBtn.style.cursor = 'pointer';
+                    commentInput.insertAdjacentElement('afterend', sendBtn);
+
+                    const sendFeedback = async () => {
+                        const comment = commentInput.value;
+                        try {
+                            const resp = await fetch('/recommend/feedback/', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    client_id: clientId,
+                                    product_name: productName,
+                                    rating: rating,
+                                    comment: comment
+                                })
+                            });
+                            if (resp.ok) {
+                                alert('Merci pour votre retour !');
+                                btn.disabled = true;
+                                sendBtn.remove();
+                                commentInput.style.display = 'none';
+                            } else {
+                                alert('Erreur lors de l’envoi.');
+                            }
+                        } catch (err) {
+                            alert('Erreur réseau.');
+                        }
+                    };
+                    sendBtn.onclick = sendFeedback;
+                    commentInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            sendFeedback();
+                        }
+                    });
+                    return;
+                }
+                // For thumbs-up (or thumbs-down if comment already shown), send immediately
+                let comment = '';
+                if (rating === 0) comment = commentInput.value;
+                try {
+                    const resp = await fetch('/recommend/feedback/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            client_id: clientId,
+                            product_name: productName,
+                            rating: rating,
+                            comment: comment
+                        })
+                    });
+                    if (resp.ok) {
+                        alert('Merci pour votre retour !');
+                        btn.disabled = true;
+                        if (commentInput) commentInput.style.display = 'none';
+                    } else {
+                        alert('Erreur lors de l’envoi.');
+                    }
+                } catch (err) {
+                    alert('Erreur réseau.');
+                }
+            });
+        });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    searchBtn.addEventListener('click', searchClients);
+    searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchClients(); });
+</script>
+{% endblock %}

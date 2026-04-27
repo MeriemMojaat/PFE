@@ -1,0 +1,4 @@
+client_id,product_name,factual_score,relevance_score,clarity_score,hallucination_score,overall_score,cites_client_data,cites_condition,forbidden_words,evaluated_at
+C000001,La carte BH GOLD Internationale,10,10,7,7,8.5,True,True,voyage,2026-04-21 17:16:06.095275
+C000001,Le Pack : BH Access,10,10,6,10,9.0,True,True,,2026-04-21 17:16:09.136478
+C000001,Le credit Direct,10,10,6,10,9.0,True,True,,2026-04-21 17:16:12.094218
