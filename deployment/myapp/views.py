@@ -14,6 +14,10 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import Conversation, Message
 
+from django.utils import timezone
+from datetime import timedelta
+from .models import RecommendationFeedback, ProductScoreModifier
+
 # Initialize RAG system (only once when server starts)
 index = ProductIndex("product_contents.json")
 llm = OllamaClient(model="llama3:8b")   # or your model
@@ -148,8 +152,8 @@ def recommend_client(request, client_id):
         return JsonResponse({'error': f'Aucune recommandation pour le client {client_id}', 'recommendations': []}, status=200)
     if 'error' in recs[0]:
         return JsonResponse({'error': recs[0]['error'], 'recommendations': []}, status=200)
-    results = [{'product_name': r['product_name'], 'score': r['score'], 'explanation': r['explanation']} for r in recs]
-    return JsonResponse({'client_id': client_id, 'recommendations': results})
+    # Return the full list as‑is (each item contains product_name, score, explanation, xai)
+    return JsonResponse({'client_id': client_id, 'recommendations': recs})
 
 @login_required
 @require_http_methods(["GET"])
@@ -175,6 +179,8 @@ def search_client(request):
     matched = df[mask][['client_id', 'full_name', 'age', 'job_position', 'rfm_segment']].to_dict(orient='records')
     return JsonResponse({'results': matched})
 
+
+
 @csrf_exempt
 @require_http_methods(["POST"])
 @login_required
@@ -184,14 +190,33 @@ def feedback(request):
     product_name = data.get('product_name')
     rating = data.get('rating')       # 1 = 👍, 0 = 👎
     comment = data.get('comment', '')
+
+    # Save the feedback
     RecommendationFeedback.objects.create(
         client_id=client_id,
         product_name=product_name,
         rating=rating,
         comment=comment
     )
-    return JsonResponse({'status': 'ok'})
 
+    # Update product modifier based on last 30 days of feedback
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+    recent = RecommendationFeedback.objects.filter(
+        product_name=product_name,
+        created_at__gte=thirty_days_ago
+    )
+    net = recent.filter(rating=1).count() - recent.filter(rating=0).count()
+    # Modifier = net / 10 (range roughly -1 to +1)
+    modifier = net / 10.0
+    # Clamp between -2 and +2
+    modifier = max(-2.0, min(2.0, modifier))
+
+    obj, created = ProductScoreModifier.objects.update_or_create(
+        product_name=product_name,
+        defaults={'modifier': modifier}
+    )
+
+    return JsonResponse({'status': 'ok', 'modifier': modifier})
 # If you have not yet created a template view for the recommendations page, add:
 @login_required
 def recommendations_page(request):

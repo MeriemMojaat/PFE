@@ -22,5 +22,6 @@ urlpatterns = [
     path('recommend/search/', views.search_client, name='search_client'),
     path('recommendations/', views.recommendations_page, name='recommendations'),
     path('recommend/client-info/<str:client_id>/', views.client_info, name='client_info'),
-    path('api/feedback/', views.feedback, name='feedback')
+    path('recommend/feedback/', views.feedback, name='feedback'),   # <-- ADD THIS LINE
+
     ]

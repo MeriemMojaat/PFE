@@ -44,3 +44,10 @@ class RecommendationFeedback(models.Model):
     rating = models.IntegerField(choices=[(1,'👍'), (0,'👎')])
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+class ProductScoreModifier(models.Model):
+    product_name = models.CharField(max_length=200, unique=True)
+    modifier = models.FloatField(default=0.0)  # negative for disliked, positive for liked
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.product_name}: {self.modifier}"

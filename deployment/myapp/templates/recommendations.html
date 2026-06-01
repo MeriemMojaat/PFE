@@ -323,30 +323,44 @@
         clientInfoDiv.innerHTML = html;
     }
 
-    function displayRecommendations(recommendations, clientId) {
-        let html = '';
-        recommendations.forEach(rec => {
-            html += `
-                <div class="recommendation-card" data-product="${escapeHtml(rec.product_name)}">
-                    <div class="recommendation-header">
-                        <span class="recommendation-name">${escapeHtml(rec.product_name)}</span>
-                        <span class="recommendation-score">${rec.score}/10</span>
+  function displayRecommendations(recommendations, clientId) {
+    let html = '';
+    recommendations.forEach(rec => {
+        const xai = rec.xai || {};
+        html += `
+            <div class="recommendation-card" data-product="${escapeHtml(rec.product_name)}">
+                <div class="recommendation-header">
+                    <span class="recommendation-name">${escapeHtml(rec.product_name)}</span>
+                </div>
+                <div class="recommendation-body">
+                    <div class="recommendation-explanation">${escapeHtml(rec.explanation)}</div>
+                    <div class="recommendation-meta">
+                        <details>
+                            <summary>🔍 Scores de qualité</summary>
+                            <ul style="margin-top: 8px; padding-left: 20px;">
+                                <li>📊 Factuel: ${xai.factual_score || '?'}/10</li>
+                                <li>🎯 Pertinence: ${xai.relevance_score || '?'}/10</li>
+                                <li>✍️ Clarté: ${xai.clarity_score || '?'}/10</li>
+                                <li>🏆 Global: ${xai.overall_score || '?'}/10</li>
+                            </ul>
+                            <div style="margin-top: 10px; font-size: 0.85rem; color: #555; background: #f9f9f9; padding: 8px; border-radius: 6px;">
+                                <strong>💬 Explication des scores :</strong><br>
+                                ${escapeHtml(xai.feedback || 'Aucun détail disponible.')}
+                            </div>
+                        </details>
                     </div>
-                    <div class="recommendation-body">
-                        <div class="recommendation-explanation">${escapeHtml(rec.explanation)}</div>
-                        <div class="feedback-buttons">
-                            <button class="thumbs-up" data-rating="1">👍 Utile</button>
-                            <button class="thumbs-down" data-rating="0">👎 Pas utile</button>
-                            <input type="text" class="feedback-comment" placeholder="Votre commentaire (optionnel)">
-                        </div>
+                    <div class="feedback-buttons">
+                        <button class="thumbs-up" data-rating="1">👍 Utile</button>
+                        <button class="thumbs-down" data-rating="0">👎 Pas utile</button>
+                        <input type="text" class="feedback-comment" placeholder="Votre commentaire (optionnel)">
                     </div>
                 </div>
-            `;
-        });
-        recommendationsList.innerHTML = html;
-        attachFeedbackListeners(clientId);
-    }
-
+            </div>
+        `;
+    });
+    recommendationsList.innerHTML = html;
+    attachFeedbackListeners(clientId);
+}
     function attachFeedbackListeners(clientId) {
         document.querySelectorAll('.thumbs-up, .thumbs-down').forEach(btn => {
             btn.addEventListener('click', async (e) => {
@@ -434,6 +448,7 @@
             });
         });
     }
+    
 
     function escapeHtml(text) {
         if (!text) return '';
