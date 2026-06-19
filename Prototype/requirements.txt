@@ -1,0 +1,11 @@
+django 
+pandas 
+numpy 
+ollama 
+plotly
+python-decouple
+requests
+reportlab
+faker
+matplotlib 
+pillow

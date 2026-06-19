@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Rapport Stratégique — Agent d'Innovation Produit Bancaire</title>
+<style>
+  /* ============================================================
+     PDF TEMPLATE — Agent d'Innovation Produit Bancaire
+     Format: A4 (210mm × 297mm). Print with browser → "Save as PDF".
+     ============================================================ */
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  :root {
+    --navy:        #1A2A4A;
+    --navy-deep:   #0F1A2E;
+    --red:         #E32227;
+    --red-dark:    #C41E22;
+    --soft-blue:   #E8EEF9;
+    --ink:         #1F2937;
+    --muted:       #6B7280;
+    --line:        #E5E7EB;
+    --bg:          #FFFFFF;
+    --gold:        #C9A86A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink);
+    background: #f3f4f6;
+    font-size: 11pt;
+    line-height: 1.55;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Each .page is one A4 sheet */
+  .page {
+    width: 210mm;
+    height: 297mm;
+    background: var(--bg);
+    margin: 12mm auto;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    page-break-after: always;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  @media print {
+    body { background: #fff; }
+    .page { margin: 0; box-shadow: none; }
+  }
+
+  /* ---------- COVER PAGE ---------- */
+  .cover {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(227,34,39,0.25), transparent 45%),
+      linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: #fff;
+    padding: 28mm 22mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .cover-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-mark {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #fff; font-size: 22pt;
+    box-shadow: 0 6px 20px rgba(227,34,39,0.45);
+  }
+  .brand-text { font-size: 11pt; letter-spacing: 0.18em; text-transform: uppercase; color: #cdd6e8; }
+  .brand-name { font-size: 14pt; font-weight: 700; color: #fff; margin-top: 2px; }
+
+  .cover-title {
+    margin-top: 30mm;
+  }
+  .cover-eyebrow {
+    color: var(--red);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-size: 10pt;
+    margin-bottom: 14px;
+  }
+  .cover h1 {
+    font-size: 36pt;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #fff;
+    max-width: 160mm;
+  }
+  .cover h1 span { color: var(--red); }
+  .cover-sub {
+    margin-top: 14px;
+    font-size: 13pt;
+    color: #c8d2e6;
+    max-width: 150mm;
+  }
+  .cover-divider {
+    width: 60mm; height: 4px;
+    background: var(--red);
+    margin-top: 18px;
+    border-radius: 2px;
+  }
+
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+  }
+  .meta-label { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.15em; color: #97a4c2; }
+  .meta-value { font-size: 12pt; font-weight: 600; color: #fff; margin-top: 4px; }
+
+  /* ---------- CONTENT PAGES ---------- */
+  .content {
+    padding: 22mm 20mm 26mm 20mm;
+  }
+  .page-header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    padding: 8mm 20mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    font-size: 9pt;
+    color: var(--muted);
+  }
+  .page-header .ph-brand { color: var(--navy); font-weight: 700; }
+  .page-header .ph-brand b { color: var(--red); }
+
+  .page-footer {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 6mm 20mm;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    font-size: 8.5pt;
+    color: var(--muted);
+  }
+  .page-footer .pf-num {
+    background: var(--navy);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* ---------- TYPOGRAPHY ---------- */
+  h2.section-title {
+    font-size: 20pt;
+    color: var(--navy);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .section-eyebrow {
+    color: var(--red);
+    font-size: 9pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 8px;
+  }
+  .section-rule {
+    width: 40mm; height: 3px;
+    background: var(--red);
+    border-radius: 2px;
+    margin-bottom: 18px;
+  }
+  h3 {
+    font-size: 13pt;
+    color: var(--navy);
+    font-weight: 700;
+    margin: 18px 0 8px;
+  }
+  p { margin-bottom: 10px; }
+  ul { margin: 8px 0 12px 18px; }
+  li { margin-bottom: 5px; }
+
+  /* ---------- KPI GRID ---------- */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 14px 0 22px;
+  }
+  .kpi {
+    background: var(--soft-blue);
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .kpi-label {
+    font-size: 8.5pt;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+  }
+  .kpi-value {
+    font-size: 18pt;
+    color: var(--navy);
+    font-weight: 800;
+    margin-top: 4px;
+    letter-spacing: -0.01em;
+  }
+  .kpi-delta {
+    font-size: 9pt;
+    color: #128a4e;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  /* ---------- TABLE ---------- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10pt;
+    margin: 10px 0 16px;
+  }
+  thead th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 600;
+    font-size: 9.5pt;
+    letter-spacing: 0.04em;
+  }
+  thead th:first-child { border-top-left-radius: 6px; }
+  thead th:last-child { border-top-right-radius: 6px; }
+  tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  tbody tr:nth-child(even) { background: #FAFBFD; }
+  tbody td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--navy); }
+
+  /* ---------- AI RECOMMENDATION BLOCKS ---------- */
+  .reco-block {
+    background: #FAFBFD;
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--red);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 10px 0 14px;
+  }
+  .reco-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .reco-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--navy);
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14pt;
+    flex-shrink: 0;
+  }
+  .reco-title {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .reco-body { font-size: 10.5pt; color: var(--ink); }
+
+  /* ---------- CHART PLACEHOLDERS (visual bars) ---------- */
+  .bar-chart {
+    margin: 14px 0 22px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 50mm 1fr 22mm;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 10pt;
+  }
+  .bar-label { color: var(--navy); font-weight: 600; }
+  .bar-track {
+    height: 14px;
+    background: var(--soft-blue);
+    border-radius: 7px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--red));
+    border-radius: 7px;
+  }
+  .bar-value { text-align: right; font-weight: 700; color: var(--navy); font-variant-numeric: tabular-nums; }
+
+  /* Donut-like segment legend */
+  .legend {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 16px;
+    margin-top: 10px;
+    font-size: 10pt;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Callout / quote */
+  .callout {
+    background: linear-gradient(135deg, var(--navy), var(--navy-deep));
+    color: #fff;
+    padding: 18px 20px;
+    border-radius: 10px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .callout::before {
+    content: "“";
+    position: absolute;
+    top: -6px; left: 14px;
+    font-size: 48pt;
+    color: var(--red);
+    line-height: 1;
+    font-family: Georgia, serif;
+  }
+  .callout p { margin: 0 0 6px 30px; font-size: 11pt; font-style: italic; }
+  .callout cite { margin-left: 30px; font-size: 9pt; color: #c8d2e6; font-style: normal; letter-spacing: 0.08em; text-transform: uppercase; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .badge-red  { background: rgba(227,34,39,0.12); color: var(--red-dark); }
+  .badge-navy { background: var(--soft-blue); color: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1 — COVER ==================== -->
+<section class="page cover">
+  <div>
+    <div class="cover-top">
+      <div class="logo-mark">B</div>
+      <div>
+        <div class="brand-text">Banque · Rapport Confidentiel</div>
+        <div class="brand-name">Agent d'Innovation Produit Bancaire</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-title">
+    <div class="cover-eyebrow">Rapport Stratégique 2026</div>
+    <h1>Recommandations <span>produits</span> & opportunités de croissance</h1>
+    <p class="cover-sub">Analyse des segments clients, tendances d'adoption et plan d'action priorisé généré par l'agent d'intelligence produit.</p>
+    <div class="cover-divider"></div>
+  </div>
+
+  <div class="cover-meta">
+    <div>
+      <div class="meta-label">Date</div>
+      <div class="meta-value">18 Juin 2026</div>
+    </div>
+    <div>
+      <div class="meta-label">Préparé pour</div>
+      <div class="meta-value">Direction Produit</div>
+    </div>
+    <div>
+      <div class="meta-label">Référence</div>
+      <div class="meta-value">AIPB-2026-Q2-014</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== PAGE 2 — RÉSUMÉ EXÉCUTIF ==================== -->
+<section class="page">
+  <div class="page-header">
+    <div class="ph-brand">Agent d'Innovation <b>Produit Bancaire</b></div>
+    <div>Rapport Stratégique · 2026</div>
+  </div>
+
+  <div class="content">
+    <div class="section-eyebrow">01 — Synthèse</div>
+    <h2 class="section-title">Résumé exécutif</h2>
+    <div class="section-rule"></div>
+
+    <p>Sur la base de l'analyse de <strong>600 clients synthétiques</strong> répartis en cinq segments stratégiques, l'agent identifie trois leviers majeurs pour accélérer l'acquisition et augmenter la valeur vie client (CLV) sur les 12 prochains mois.</p>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="kpi-label">Clients analysés</div>
+        <div class="kpi-value">600</div>
+        <div class="kpi-delta">+ 12 % vs T1</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Revenu moyen</div>
+        <div class="kpi-value">2 840 €</div>
+        <div class="kpi-delta">+ 6,4 %</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Taux d'adoption</div>
+        <div class="kpi-value">68 %</div>
+        <div class="kpi-delta">+ 9 pts</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Satisfaction (NPS)</div>
+        <div class="kpi-value">+42</div>
+        <div class="kpi-delta">+ 5 pts</div>
+      </div>
+    </div>
+
+    <h3>Conclusions clés</h3>
+    <ul>
+      <li><strong>Jeunes Actifs</strong> représentent le segment à plus forte marge potentielle (CLV +28 %).</li>
+      <li><strong>Étudiants</strong> montrent une adoption mobile de 91 % — opportunité de cross-sell sur l'épargne automatisée.</li>
+      <li>Le segment <strong>Premium</strong> reste sous-équipé en services patrimoniaux (taux d'attachement 34 %).</li>
+    </ul>
+
+    <div class="callout">
+      <p>Concentrer 60 % de l'effort produit du prochain trimestre sur les segments Jeunes Actifs et Premium permettrait de générer un revenu additionnel estimé à 4,2 M€ sur 12 mois.</p>
+      <cite>— Agent d'Innovation Produit, juin 2026</cite>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div>Document confidentiel — Diffusion restreinte</div>
+    <div class="pf-num">02</div>
+  </div>
+</section>
+
+<!-- ==================== PAGE 3 — ANALYSE DES SEGMENTS ==================== -->
+<section class="page">
+  <div class="page-header">
+    <div class="ph-brand">Agent d'Innovation <b>Produit Bancaire</b></div>
+    <div>Rapport Stratégique · 2026</div>
+  </div>
+
+  <div class="content">
+    <div class="section-eyebrow">02 — Segmentation</div>
+    <h2 class="section-title">Analyse des segments clients</h2>
+    <div class="section-rule"></div>
+
+    <p>Répartition de la base client par segment, niveau d'engagement et contribution au revenu global.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Segment</th>
+          <th>Clients</th>
+          <th>Part</th>
+          <th>Revenu moyen</th>
+          <th>Adoption</th>
+          <th>NPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge badge-navy">Étudiants</span></td><td class="num">156</td><td class="num">26 %</td><td class="num">420 €</td><td class="num">91 %</td><td class="num">+38</td></tr>
+        <tr><td><span class="badge badge-navy">Jeunes Actifs</span></td><td class="num">198</td><td class="num">33 %</td><td class="num">2 140 €</td><td class="num">74 %</td><td class="num">+45</td></tr>
+        <tr><td><span class="badge badge-navy">Familles</span></td><td class="num">132</td><td class="num">22 %</td><td class="num">3 680 €</td><td class="num">62 %</td><td class="num">+41</td></tr>
+        <tr><td><span class="badge badge-red">Premium</span></td><td class="num">78</td><td class="num">13 %</td><td class="num">8 950 €</td><td class="num">55 %</td><td class="num">+48</td></tr>
+        <tr><td><span class="badge badge-navy">Seniors</span></td><td class="num">36</td><td class="num">6 %</td><td class="num">2 210 €</td><td class="num">48 %</td><td class="num">+39</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Adoption des produits par segment</h3>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <div class="bar-label">Carte mobile</div>
+        <div class="bar-track"><div class="bar-fill" style="width:91%"></div></div>
+        <div class="bar-value">91 %</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Épargne automatisée</div>
+        <div class="bar-track"><div class="bar-fill" style="width:64%"></div></div>
+        <div class="bar-value">64 %</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Crédit conso</div>
+        <div class="bar-track"><div class="bar-fill" style="width:42%"></div></div>
+        <div class="bar-value">42 %</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Assurance habitation</div>
+        <div class="bar-track"><div class="bar-fill" style="width:37%"></div></div>
+        <div class="bar-value">37 %</div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label">Gestion patrimoniale</div>
+        <div class="bar-track"><div class="bar-fill" style="width:24%"></div></div>
+        <div class="bar-value">24 %</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-swatch" style="background:var(--navy)"></span> Engagement élevé</div>
+      <div class="legend-item"><span class="legend-swatch" style="background:var(--red)"></span> Opportunité prioritaire</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div>Document confidentiel — Diffusion restreinte</div>
+    <div class="pf-num">03</div>
+  </div>
+</section>
+
+<!-- ==================== PAGE 4 — RECOMMANDATIONS AI ==================== -->
+<section class="page">
+  <div class="page-header">
+    <div class="ph-brand">Agent d'Innovation <b>Produit Bancaire</b></div>
+    <div>Rapport Stratégique · 2026</div>
+  </div>
+
+  <div class="content">
+    <div class="section-eyebrow">03 — Recommandations</div>
+    <h2 class="section-title">Stratégie produit générée par l'agent</h2>
+    <div class="section-rule"></div>
+
+    <div class="reco-block">
+      <div class="reco-head">
+        <div class="reco-icon">🧭</div>
+        <div class="reco-title">Interprétation stratégique</div>
+      </div>
+      <div class="reco-body">Le segment Jeunes Actifs combine forte adoption digitale et croissance de revenu. La banque doit y déployer une offre packagée intégrant carte premium digitale, épargne automatisée et assurance mobilité.</div>
+    </div>
+
+    <div class="reco-block">
+      <div class="reco-head">
+        <div class="reco-icon">💡</div>
+        <div class="reco-title">Nouveau produit recommandé</div>
+      </div>
+      <div class="reco-body"><strong>Compte « Boost »</strong> — pack mensuel à 9,90 € incluant carte virtuelle illimitée, arrondis investis automatiquement, et garantie achats étendue. Cible : 25–35 ans urbains.</div>
+    </div>
+
+    <div class="reco-block">
+      <div class="reco-head">
+        <div class="reco-icon">🤝</div>
+        <div class="reco-title">Partenariat stratégique</div>
+      </div>
+      <div class="reco-body">Co-construction avec un acteur de la mobilité durable (vélo / VE) pour offrir un financement à taux préférentiel et renforcer la proposition de valeur ESG auprès des Jeunes Actifs.</div>
+    </div>
+
+    <div class="reco-block">
+      <div class="reco-head">
+        <div class="reco-icon">📊</div>
+        <div class="reco-title">Indicateurs de succès (12 mois)</div>
+      </div>
+      <div class="reco-body">
+        <ul style="margin-bottom:0">
+          <li>+ 15 000 souscriptions « Boost » nettes</li>
+          <li>NPS du segment ≥ +50</li>
+          <li>Taux d'attachement multi-produits &gt; 3,2</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="reco-block">
+      <div class="reco-head">
+        <div class="reco-icon">📈</div>
+        <div class="reco-title">Projection d'impact</div>
+      </div>
+      <div class="reco-body">Revenu additionnel estimé : <strong>4,2 M€</strong> sur 12 mois · marge contributive 38 % · payback projet : 7 mois.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div>Document confidentiel — Diffusion restreinte</div>
+    <div class="pf-num">04</div>
+  </div>
+</section>
+
+<!-- ==================== PAGE 5 — PLAN D'ACTION & ANNEXES ==================== -->
+<section class="page">
+  <div class="page-header">
+    <div class="ph-brand">Agent d'Innovation <b>Produit Bancaire</b></div>
+    <div>Rapport Stratégique · 2026</div>
+  </div>
+
+  <div class="content">
+    <div class="section-eyebrow">04 — Exécution</div>
+    <h2 class="section-title">Plan d'action & prochaines étapes</h2>
+    <div class="section-rule"></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Phase</th>
+          <th>Action</th>
+          <th>Responsable</th>
+          <th>Échéance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1 · Cadrage</td><td>Validation business case et go/no-go comité produit</td><td>Direction Produit</td><td>Juil. 2026</td></tr>
+        <tr><td>2 · Design</td><td>Prototypage UX du pack « Boost » + tests utilisateurs</td><td>Studio Design</td><td>Sept. 2026</td></tr>
+        <tr><td>3 · Build</td><td>Développement core banking + intégration partenaire</td><td>Tech &amp; Partenariats</td><td>Déc. 2026</td></tr>
+        <tr><td>4 · Pilote</td><td>Lancement progressif sur 3 régions test</td><td>Marketing</td><td>Fév. 2027</td></tr>
+        <tr><td>5 · Scale</td><td>Déploiement national + campagne acquisition</td><td>Direction Générale</td><td>Mai 2027</td></tr>
+      </tbody>
+    </table>
+
+    <div class="two-col">
+      <div>
+        <h3>Risques identifiés</h3>
+        <ul>
+          <li>Cannibalisation partielle des comptes standards</li>
+          <li>Délai d'intégration du partenaire mobilité</li>
+          <li>Sensibilité prix sur le segment étudiant</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Hypothèses clés</h3>
+        <ul>
+          <li>Taux de conversion campagne : 4,2 %</li>
+          <li>Churn mensuel cible : &lt; 1,8 %</li>
+          <li>Coût d'acquisition : ≤ 38 € / client</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Méthodologie</h3>
+    <p>Données synthétiques générées par l'agent d'innovation produit selon une distribution réaliste calibrée sur les benchmarks sectoriels. Les recommandations sont produites par un modèle de langage spécialisé, supervisé par l'équipe stratégie produit.</p>
+
+    <div class="callout">
+      <p>L'agent d'innovation accélère le cycle « insight → décision » de plusieurs semaines à quelques minutes, libérant les équipes pour se concentrer sur l'exécution.</p>
+      <cite>— Direction de l'Innovation</cite>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div>© 2026 Banque · Agent d'Innovation Produit Bancaire</div>
+    <div class="pf-num">05</div>
+  </div>
+</section>
+
+</body>
+</html>

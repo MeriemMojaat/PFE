@@ -71,7 +71,6 @@
         background: white;
     }
 
-    /* Rest of your existing CSS (unchanged) */
     .new-chat-btn {
         background: #0a2b4e;
         color: white;
@@ -240,6 +239,100 @@
         0%, 60%, 100% { transform: translateY(0); }
         30% { transform: translateY(-4px); }
     }
+
+    /* Custom modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-content {
+        background-color: #fff;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .modal-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #0a2b4e;
+    }
+    .modal-close {
+        cursor: pointer;
+        font-size: 24px;
+        font-weight: bold;
+        color: #94a3b8;
+        line-height: 1;
+    }
+    .modal-close:hover {
+        color: #1e293b;
+    }
+    .modal-body {
+        padding: 20px;
+        font-size: 0.95rem;
+        color: #334155;
+    }
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 16px 20px;
+        border-top: 1px solid #e2e8f0;
+    }
+    .btn-secondary {
+        background: #e2e8f0;
+        border: none;
+        color: #1e293b;
+        padding: 8px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    .btn-danger {
+        background: #dc2626;
+        border: none;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 0.9rem;
+    }
+    .btn-secondary:hover {
+        background: #cbd5e1;
+    }
+    .btn-danger:hover {
+        background: #b91c1c;
+    }
+
+    /* Empty state message */
+    .empty-chat {
+        text-align: center;
+        color: #94a3b8;
+        padding: 40px;
+        font-size: 1rem;
+    }
+
     @media (max-width: 768px) {
         .sidebar {
             position: absolute;
@@ -276,7 +369,7 @@
                 <button class="delete-conv" data-id="{{ conv.id }}">🗑️</button>
             </div>
             {% empty %}
-            <div style="text-align: center; color: #94a3b8; padding: 20px;">Aucune conversation</div>
+            <!-- <div style="text-align: center; color: #94a3b8; padding: 20px;">Aucune conversation</div> -->
             {% endfor %}
         </div>
     </div>
@@ -302,8 +395,25 @@
     </div>
 </div>
 
+<!-- Custom delete confirmation modal -->
+<div id="deleteConfirmModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Supprimer la conversation</h3>
+            <span class="modal-close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir supprimer cette conversation ? Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" id="modalCancelBtn">Annuler</button>
+            <button class="btn-danger" id="modalConfirmBtn">Supprimer</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Remove the floating chat button from base.html on this page
+    // Remove floating chat button from base.html on this page
     document.addEventListener('DOMContentLoaded', () => {
         const chatButton = document.getElementById('chatButton');
         if (chatButton) chatButton.remove();
@@ -327,6 +437,9 @@
     const csrftoken = getCookie('csrftoken');
 
     let currentConversationId = null;
+    let pendingDeleteId = null;
+    let creatingNew = false;
+
     const messagesContainer = document.getElementById('messagesContainer');
     const chatInput = document.getElementById('chatInput');
     const sendBtn = document.getElementById('sendBtn');
@@ -335,12 +448,92 @@
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebarToggle');
 
-    // Toggle sidebar collapse
-    sidebarToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-    });
+    // Modal elements
+    const modal = document.getElementById('deleteConfirmModal');
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+    const modalCloseSpan = document.querySelector('.modal-close');
 
-    // Load a conversation's messages
+    function showDeleteModal(convId) {
+        pendingDeleteId = convId;
+        modal.style.display = 'flex';
+    }
+
+    function hideModal() {
+        modal.style.display = 'none';
+        pendingDeleteId = null;
+    }
+
+    // Actual deletion (does NOT auto-create new conversation)
+    async function executeDeleteConversation(convId) {
+        try {
+            const response = await fetch(`/api/delete_conversation/${convId}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                }
+            });
+            const data = await response.json();
+            if (data.success) {
+                // Remove from DOM
+                const item = document.querySelector(`.conversation-item[data-id="${convId}"]`);
+                if (item) item.remove();
+
+                // If the deleted conversation was the active one
+                if (currentConversationId == convId) {
+                    // Check if there are any other conversations left
+                    const remaining = document.querySelectorAll('.conversation-item');
+                    if (remaining.length === 0) {
+                        // No conversations – clear the chat area and set no active conversation
+                        currentConversationId = null;
+                        messagesContainer.innerHTML = '<div class="empty-chat">Aucune conversation active. Cliquez sur "Nouvelle conversation" pour commencer.</div>';
+                    } else {
+                        // Load the first conversation in the list
+                        const firstConv = remaining[0];
+                        loadConversation(firstConv.dataset.id);
+                    }
+                }
+            } else {
+                console.error('Delete failed:', data.error);
+                alert('Erreur lors de la suppression.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Erreur réseau.');
+        }
+    }
+
+    async function newConversation() {
+        if (creatingNew) return;
+        creatingNew = true;
+        try {
+            const response = await fetch('/api/new_conversation/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                }
+            });
+            const data = await response.json();
+            if (data.conversation_id) {
+                // Check if already exists (avoid duplicates)
+                let existing = document.querySelector(`.conversation-item[data-id="${data.conversation_id}"]`);
+                if (!existing) {
+                    const newItem = document.createElement('div');
+                    newItem.className = 'conversation-item';
+                    newItem.dataset.id = data.conversation_id;
+                    newItem.innerHTML = `<span class="conversation-title">Nouvelle conversation</span><button class="delete-conv" data-id="${data.conversation_id}">🗑️</button>`;
+                    conversationsList.appendChild(newItem);
+                    attachDeleteHandlers();
+                }
+                loadConversation(data.conversation_id);
+            }
+        } finally {
+            creatingNew = false;
+        }
+    }
+
     async function loadConversation(convId) {
         currentConversationId = convId;
         const response = await fetch(`/api/conversations/${convId}/`);
@@ -356,7 +549,7 @@
                 addMessageToUI(msg.content, msg.role === 'user');
             }
         }
-        // Highlight active conversation in sidebar
+        // Highlight active conversation
         document.querySelectorAll('.conversation-item').forEach(item => {
             item.classList.remove('active');
             if (item.dataset.id == convId) item.classList.add('active');
@@ -415,7 +608,6 @@
             } else {
                 addMessageToUI("Désolé, une erreur s'est produite.", false);
             }
-            // Update the conversation title in sidebar without reloading the page
             await updateConversationTitle(currentConversationId);
         } catch (err) {
             hideTyping();
@@ -424,9 +616,7 @@
     }
 
     async function updateConversationTitle(convId) {
-        // Fetch updated conversation list from the server (reusing the page HTML is heavy; better to have a dedicated API)
-        // For simplicity, we'll fetch the chat page again and extract the title.
-        // Alternatively, you could create an API endpoint `/api/conversation/<id>/title` but to avoid extra code, we use this.
+        // Fetch updated conversation list from the server to get the new title
         const response = await fetch('/chat/');
         const htmlText = await response.text();
         const parser = new DOMParser();
@@ -441,53 +631,36 @@
         }
     }
 
-    async function newConversation() {
-        const response = await fetch('/api/new_conversation/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            }
-        });
-        const data = await response.json();
-        if (data.conversation_id) {
-            const newItem = document.createElement('div');
-            newItem.className = 'conversation-item';
-            newItem.dataset.id = data.conversation_id;
-            newItem.innerHTML = `<span class="conversation-title">Nouvelle conversation</span><button class="delete-conv" data-id="${data.conversation_id}">🗑️</button>`;
-            conversationsList.appendChild(newItem);
-            loadConversation(data.conversation_id);
-            attachDeleteHandlers();
-        }
-    }
-
     function attachDeleteHandlers() {
         document.querySelectorAll('.delete-conv').forEach(btn => {
-            btn.removeEventListener('click', handleDelete);
-            btn.addEventListener('click', handleDelete);
+            btn.removeEventListener('click', handleDeleteClick);
+            btn.addEventListener('click', handleDeleteClick);
         });
     }
 
-    async function handleDelete(e) {
+    function handleDeleteClick(e) {
         e.stopPropagation();
         const convId = e.currentTarget.dataset.id;
-        if (confirm('Supprimer cette conversation ?')) {
-            await fetch(`/api/delete_conversation/${convId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken
-                }
-            });
-            const item = document.querySelector(`.conversation-item[data-id="${convId}"]`);
-            if (item) item.remove();
-            if (currentConversationId == convId) {
-                newConversation();
-            }
-        }
+        showDeleteModal(convId);
     }
 
-    // Event listeners
+    // Modal event listeners
+    modalConfirmBtn.addEventListener('click', async () => {
+        if (pendingDeleteId) {
+            await executeDeleteConversation(pendingDeleteId);
+            hideModal();
+        }
+    });
+    modalCancelBtn.addEventListener('click', hideModal);
+    modalCloseSpan.addEventListener('click', hideModal);
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) hideModal();
+    });
+
+    // Main UI events
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
     sendBtn.addEventListener('click', sendMessage);
     chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
     newChatBtn.addEventListener('click', newConversation);
@@ -502,12 +675,14 @@
 
     attachDeleteHandlers();
 
-    // Load the first conversation if any, otherwise create a new one
+    // Initial load: either first conversation or show empty state
     const firstConv = document.querySelector('.conversation-item');
     if (firstConv) {
         loadConversation(firstConv.dataset.id);
     } else {
-        newConversation();
+        // No conversations: display empty state
+        currentConversationId = null;
+        messagesContainer.innerHTML = '<div class="empty-chat">Aucune conversation active. Cliquez sur "Nouvelle conversation" pour commencer.</div>';
     }
 </script>
 {% endblock %}

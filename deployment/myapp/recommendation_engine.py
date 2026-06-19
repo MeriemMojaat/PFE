@@ -1,5 +1,8 @@
 """
 Recommendation Engine – Final with Feedback Modifier and Prompt Improvement
+Longer explanations enabled (num_predict=2000, temperature=0.2)
+Added pre‑filter rules: block gold/premium for Low Value/At Risk, block loans for age < 21
+Force RFM segment in explanations
 """
 
 import json
@@ -82,10 +85,9 @@ class RecommendationEngine:
         self.products_df['max_age'] = self.products_df['max_age'].fillna(120).astype(int)
         self.load_transactional_behaviour()
         self.golden_examples = self.load_golden_examples()
-        self.use_llm_judge = True
+        self.use_llm_judge = True   # Ensure LLM judge is active
 
     def load_transactional_behaviour(self):
-        # ... (unchanged, same as previous version) ...
         try:
             valid_accounts = set(self.clients_df['account_number'].astype(str))
             merchants = pd.read_csv(MERCHANTS_FILE)
@@ -165,6 +167,12 @@ class RecommendationEngine:
         job = client.get('job_position', '').lower()
         filtered = []
         for _, p in self.products_df.iterrows():
+            # Block gold/premium products for Low Value and At Risk segments
+            if rfm in ['Low Value', 'At Risk'] and ('gold' in p['name'].lower() or 'premium' in p['name'].lower() or 'internationale' in p['name'].lower()):
+                continue
+            # Block loans for clients under 21
+            if age < 21 and ('prêt' in p['name'].lower() or 'credit' in p['name'].lower()):
+                continue
             if p['min_age'] > 0 and age < p['min_age']:
                 continue
             if p['max_age'] < age:
@@ -264,8 +272,14 @@ Dépenses estivales: {summer:.1f}% du total
             elderly_rule = " IMPORTANT: Client très âgé. Ne recommande AUCUN crédit. Privilégie une carte nationale simple (CIB) et le service BH SMS."
 
         low_value_rule = ""
-        if rfm == 'Low Value' and spending < 2500:
-            low_value_rule = " IMPORTANT: Client Low Value avec capacité d'épargne modeste. Ne recommande PAS de crédit auto ou personnel. Privilégie cartes nationales et assurances."
+        if rfm in ['Low Value', 'At Risk']:
+            low_value_rule = " IMPORTANT: Client Low Value ou At Risk. Ne recommande PAS de crédit, ni de produits 'Gold' ou 'Premium'. Privilégie cartes nationales de base, packs économiques et assurances simples."
+
+        terminology_rule = " IMPORTANT: N'utilisez JAMAIS le terme 'revenu mensuel' ou 'revenu'. Utilisez uniquement 'capacité d'épargne mensuelle' (ou 'capacité d'épargne')."
+
+        income_wording_rule = ""
+        if rfm not in ['Champion', 'High Value']:
+            income_wording_rule = " ATTENTION: N'utilisez PAS les termes 'hauts revenus', 'revenus élevés', 'premium' ou 'luxe' dans l'explication. Restez sur des avantages concrets et accessibles (frais bas, simplicité, sécurité)."
 
         prompt = f"""Tu es un conseiller bancaire expert. Recommande 3 produits parfaitement adaptés à ce client.
 
@@ -279,20 +293,24 @@ Produits disponibles (déjà filtrés par âge et pertinence):
 {premium_rule}
 {elderly_rule}
 {low_value_rule}
+{income_wording_rule}
+{terminology_rule}
 
 RÈGLES OBLIGATOIRES:
 - Réponds UNIQUEMENT en français.
-- Les explications doivent être claires, détaillées (3‑4 phrases) et citer des avantages concrets (cotisation annuelle, assurance, plafond, taux).
-- Cite au moins deux attributs du client (âge, profession, capacité d'épargne, RFM).
-- N'invente aucun comportement (ex: "vous voyagez").
+- Les explications doivent être LONGUES et DÉTAILLÉES (au moins 6 phrases ou 150 mots). Citez plusieurs avantages concrets (cotisation annuelle, assurance, plafond, taux, conditions d'éligibilité, etc.).
+- Citez OBLIGATOIREMENT le Segment RFM du client (ex: "segment RFM Low Value", "client Champion") ainsi qu'au moins deux autres attributs (âge, profession, capacité d'épargne, situation familiale).
+- N'inventez aucun comportement (ex: "vous voyagez").
 - Les scores des produits sont ajustés en fonction des retours des conseillers. Un produit souvent jugé "pas utile" verra son score baissé automatiquement.
 - JSON uniquement.
 
-Exemple de bonne réponse:
+IMPORTANT: N'oubliez pas d'inclure le segment RFM du client dans l'explication (ex: "segment RFM: Low Value", "client Champion", etc.).
+
+Exemple de bonne réponse (note: l'explication est plus longue que l'exemple original) :
 {{"recommendations": [
-  {{"product_name": "La carte Yasmine","score": 9,"explanation": "À 46 ans, gérant de société, capacité d'épargne 1460 TND. Carte professionnelle avec plafond de dépassement et assurance perte/vol."}},
-  {{"product_name": "Dhamen Compte","score": 8,"explanation": "Assurance vie/hospitalisation à 3 DT/mois. Adaptée aux professionnels."}},
-  {{"product_name": "Le Pack : BH Access","score": 7,"explanation": "Pack économique à 16 DT/trimestre avec carte CIB et services à distance."}}
+  {{"product_name": "La carte Yasmine","score": 9,"explanation": "À 46 ans, gérant de société, capacité d'épargne 1460 TND. Cette carte professionnelle offre un plafond de dépassement de 2000 TND, une assurance perte et vol incluse, et des frais de cotisation annuels de 50 DT. De plus, elle permet des retraits gratuits dans tous les DAB BH Bank et des paiements sans contact sécurisés. C'est un excellent choix pour les professionnels ayant besoin de flexibilité et de sécurité. Enfin, les frais de remplacement en cas de perte sont réduits de 50% pour les bons clients."}},
+  {{"product_name": "Dhamen Compte","score": 8,"explanation": "Assurance vie/hospitalisation à 3 DT/mois. Adaptée aux professionnels, elle couvre également le conjoint et les enfants. Les cotisations sont prélevées mensuellement sans engagement de durée, et la déclaration de sinistre se fait en ligne. De plus, un service d'assistance 24/7 est inclus."}},
+  {{"product_name": "Le Pack : BH Access","score": 7,"explanation": "Pack économique à 16 DT/trimestre avec carte CIB et services à distance. Ce pack inclut les alertes SMS gratuites, l'accès à BH Net Mobile, et un livret d'épargne sans frais de tenue de compte. Idéal pour les clients qui souhaitent maîtriser leurs frais bancaires tout en bénéficiant de services digitaux essentiels."}}
 ]}}
 
 JSON:"""
@@ -319,7 +337,7 @@ JSON:"""
         return [{"product_name": n.strip(), "score": int(s), "explanation": e.strip()} for n,s,e in matches]
 
     def call_llm(self, prompt: str) -> Dict:
-        payload = {"model": MODEL, "prompt": prompt, "stream": False, "options": {"temperature": 0.0, "num_predict": 1000}}
+        payload = {"model": MODEL, "prompt": prompt, "stream": False, "options": {"temperature": 0.2, "num_predict": 2000}}
         try:
             resp = requests.post(OLLAMA_URL, json=payload, timeout=180)
             if resp.status_code == 200:
@@ -339,7 +357,7 @@ JSON:"""
         job = client.get('job_position', '').lower()
         spending = client.get('spending_capacity', 0)
         recs = []
-        if seg == 'Low Value' and spending < 2500:
+        if seg in ['Low Value', 'At Risk'] and spending < 2500:
             recs.append(("La carte Yasmine", 8, "Carte professionnelle avec plafond de dépassement."))
             recs.append(("Dhamen Compte", 7, "Assurance 3 DT/mois."))
             recs.append(("Le Pack : BH Access", 6, "Pack économique."))
@@ -489,7 +507,7 @@ Réponds avec JSON (pas de texte avant/après) :
                     r['score'] = max(1, min(10, new_score))
             except Exception as e:
                 print(f"Modifier error for {r['product_name']}: {e}")
-            # Ensure client data in explanation
+            # Ensure client data in explanation (including RFM)
             r['explanation'] = ensure_client_data_in_explanation(r['explanation'], client)
             xai = self.evaluate_recommendation(r['explanation'], client, r['product_name'])
             output.append({
@@ -518,14 +536,31 @@ Réponds avec JSON (pas de texte avant/après) :
         return all_recs
 
 def ensure_client_data_in_explanation(explanation: str, client: Dict) -> str:
+    """
+    Ensure that the explanation contains the client's age, job, savings capacity, and RFM segment.
+    If any are missing, prepend them as a single sentence.
+    """
     exp_lower = explanation.lower()
     age = str(client.get('age', ''))
     job = client.get('job_position', '').lower()
     spending = f"{client.get('spending_capacity', 0):.2f}"
-    if age in exp_lower or job in exp_lower or spending in exp_lower:
-        return explanation
-    prefix = f"Client de {age} ans, {job}, capacité d'épargne {spending} TND. "
-    return prefix + explanation
+    rfm = client.get('rfm_segment', '')
+    rfm_lower = rfm.lower()
+
+    missing_parts = []
+    if age not in exp_lower:
+        missing_parts.append(f"{age} ans")
+    if job not in exp_lower:
+        missing_parts.append(job)
+    if spending not in exp_lower:
+        missing_parts.append(f"capacité d'épargne {spending} TND")
+    if rfm_lower and rfm_lower not in exp_lower:
+        missing_parts.append(f"segment RFM {rfm}")
+
+    if missing_parts:
+        prefix = "Client " + ", ".join(missing_parts) + ". "
+        return prefix + explanation
+    return explanation
 
 if __name__ == "__main__":
     eng = RecommendationEngine()

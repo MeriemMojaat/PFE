@@ -77,15 +77,21 @@ def new_conversation(request):
     request.session.modified = True
     return JsonResponse({'conversation_id': conv.id})
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+from .models import Conversation, Message  # adjust to your actual models
 @login_required
+@require_POST
 def delete_conversation(request, conversation_id):
-    conv = get_object_or_404(Conversation, id=conversation_id, user=request.user)
-    conv.delete()
-    # If the deleted conversation was the current one, clear the session variable
-    if request.session.get('current_conversation_id') == conversation_id:
-        request.session.pop('current_conversation_id', None)
-        request.session.modified = True
-    return JsonResponse({'status': 'ok'})
+    try:
+        conversation = get_object_or_404(Conversation, id=conversation_id, user=request.user)
+        # Delete the conversation (cascade will delete messages)
+        conversation.delete()
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
 @csrf_exempt
 @require_http_methods(["POST"])

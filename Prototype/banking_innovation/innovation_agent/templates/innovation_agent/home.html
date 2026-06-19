@@ -1,0 +1,657 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agent d'Innovation Produit Bancaire</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+      .logo-image {
+            height: 60px;
+        }
+    /* -------------------- CSS Variables (Light & Dark) -------------------- */
+    :root {
+      --navy: #1A2A4A;
+      --navy-light: #2A3A5A;
+      --red: #E32227;
+      --red-hover: #C41E22;
+      --bg: #F5F7FA;
+      --card: #FFFFFF;
+      --text: #2C3E50;
+      --muted: #6B7A8F;
+      --border: #E2E8F0;
+      --soft-blue: #E8EEF9;
+      --success: #27AE60;
+      --warning: #F39C12;
+      --shadow: 0 2px 12px rgba(15, 26, 48, 0.06);
+      --shadow-hover: 0 6px 24px rgba(15, 26, 48, 0.1);
+      --radius: 14px;
+    }
+    .dark {
+      --navy: #0F1A2E;
+      --bg: #0F1626;
+      --card: #1A2438;
+      --text: #E8EEF9;
+      --muted: #94A3B8;
+      --border: #2A3548;
+      --soft-blue: #1F2A44;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      transition: background .3s, color .3s;
+    }
+    /* -------------------- Header -------------------- */
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .brand { display: flex; align-items: center; gap: .75rem; }
+    .brand img { border-radius: 0px; object-fit:contain; }
+    .brand h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; }
+    .brand p { font-size: .75rem; opacity: .7; }
+    .theme-toggle {
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+      color: #fff; padding: .5rem .9rem; border-radius: 8px; cursor: pointer;
+      font-size: .85rem; transition: background .2s;
+    }
+    .theme-toggle:hover { background: rgba(255,255,255,.2); }
+
+    /* -------------------- Layout -------------------- */
+    main {
+      max-width: 1400px; margin: 0 auto; padding: 2rem;
+      display: grid; gap: 1.5rem;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover { box-shadow: var(--shadow-hover); }
+    .card h2 {
+      font-size: 1rem; font-weight: 700; color: var(--navy);
+      margin-bottom: .25rem; display: flex; align-items: center; gap: .5rem;
+    }
+    .dark .card h2 { color: var(--text); }
+    .card .subtitle { font-size: .8rem; color: var(--muted); margin-bottom: 1.25rem; }
+
+    .col-3 { grid-column: span 3; }
+    .col-4 { grid-column: span 4; }
+    .col-6 { grid-column: span 6; }
+    .col-8 { grid-column: span 8; }
+    .col-12 { grid-column: span 12; }
+
+    @media (max-width: 1024px) {
+      .col-3, .col-4, .col-6, .col-8 { grid-column: span 12; }
+    }
+
+    /* -------------------- KPIs -------------------- */
+    .kpi-value { font-size: 2rem; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+    .dark .kpi-value { color: var(--text); }
+    .kpi-delta { font-size: .8rem; color: var(--success); margin-top: .25rem; font-weight: 600; }
+    .kpi-delta.neg { color: var(--red); }
+
+    /* -------------------- Forms -------------------- */
+    label { font-size: .8rem; font-weight: 600; color: var(--muted); display: block; margin-bottom: .4rem; }
+    select, input {
+      width: 100%; padding: .65rem .8rem; border: 1px solid var(--border);
+      border-radius: 8px; background: var(--card); color: var(--text);
+      font-family: inherit; font-size: .9rem; transition: border .2s, box-shadow .2s;
+    }
+    select:focus, input:focus {
+      outline: none; border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(26, 42, 74, .08);
+    }
+    .field { margin-bottom: 1rem; }
+    .row { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 180px; }
+    .flex-end { align-items: end; }
+
+    /* -------------------- Buttons -------------------- */
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .7rem 1.2rem; border-radius: 8px; border: none;
+      font-family: inherit; font-size: .9rem; font-weight: 600;
+      cursor: pointer; transition: all .2s;
+    }
+    .btn-primary { background: var(--navy); color: #fff; }
+    .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); }
+    .btn-accent { background: var(--red); color: #fff; }
+    .btn-accent:hover { background: var(--red-hover); transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--navy); border: 1px solid var(--border); }
+    .dark .btn-outline { color: var(--text); }
+    .btn-outline:hover { background: var(--soft-blue); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .btn-pdf { background: var(--red); color: #fff; }
+    .btn-pdf:hover { background: var(--red-hover); transform: translateY(-1px); }
+
+    /* -------------------- Charts -------------------- */
+    .chart-wrap { position: relative; height: 280px; }
+
+    /* -------------------- AI Response -------------------- */
+    .ai-response {
+      margin-top: 1.25rem; padding: 1.25rem; border-radius: 12px;
+      background: var(--soft-blue); border-left: 4px solid var(--red);
+      font-size: .9rem; line-height: 1.6;
+      display: none;
+    }
+    .ai-response h3 {
+      font-size: .95rem; font-weight: 700; color: var(--navy);
+      margin: 1rem 0 .5rem; display: flex; align-items: center; gap: .5rem;
+    }
+    .dark .ai-response h3 { color: var(--text); }
+    .ai-response h3:first-child { margin-top: 0; }
+    .ai-response p { color: var(--text); margin-bottom: .5rem; }
+    .ai-response .icon { font-size: 1.1rem; }
+    .info-tip {
+      margin-top: .75rem; font-size: .8rem; color: var(--muted);
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .info-tip .help-icon {
+      display: inline-block; width: 18px; height: 18px;
+      border-radius: 50%; background: var(--muted); color: #fff;
+      text-align: center; line-height: 18px; font-weight: 700;
+      font-size: .7rem; cursor: help;
+    }
+    .info-tip .help-icon:hover { background: var(--navy); }
+
+    /* -------------------- Spinner -------------------- */
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .8s linear infinite; display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+
+    /* -------------------- Misc -------------------- */
+    .tag {
+      display: inline-block; padding: .2rem .55rem; border-radius: 6px;
+      background: var(--soft-blue); color: var(--navy);
+      font-size: .7rem; font-weight: 600; margin-left: .5rem;
+    }
+    .dark .tag { color: var(--text); }
+    footer {
+      text-align: center; padding: 2rem; color: var(--muted); font-size: .8rem;
+    }
+    .inline-flex { display: inline-flex; align-items: center; gap: .5rem; }
+  </style>
+</head>
+<body>
+
+<header>
+  <!-- Brand with logo image -->
+  <div class="brand">
+    <img src="{% static 'logo.png' %}" alt="BH Bank Logo" class="logo-image"/>
+    <div>
+      <h1>Agent d'Innovation Produit Bancaire</h1>
+    </div>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">🌙 Mode sombre</button>
+</header>
+
+<main>
+
+  <!-- ============================================================ -->
+  <!-- Card 1: Data generation + KPIs                               -->
+  <!-- ============================================================ -->
+  <section class="card col-12">
+    <h2>🎯 Génération de Données Synthétiques</h2>
+    <p class="subtitle">Simulez une base de clientèle pour analyser les segments et tendances bancaires.</p>
+    <div class="row flex-end">
+      <div class="field" style="margin-bottom:0;">
+        <label>Nombre de clients par trimestre</label>
+        <input type="number" id="clientCount" value="150" min="50" max="500" />
+      </div>
+      <div style="flex: 0 0 auto;">
+        <button class="btn btn-primary" onclick="generateData()">⚡ Générer les données</button>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 1.5rem;">
+      <div class="card" style="box-shadow:none; border:1px solid var(--border);">
+        <p style="font-size:.75rem; color:var(--muted); font-weight:600;">CLIENTS TOTAL</p>
+        <div class="kpi-value" id="kpiTotal">0</div>
+        <div class="kpi-delta" id="kpiTotalDelta">-</div>
+      </div>
+      <div class="card" style="box-shadow:none; border:1px solid var(--border);">
+        <p style="font-size:.75rem; color:var(--muted); font-weight:600;">REVENU MOYEN</p>
+        <div class="kpi-value" id="kpiRevenue">0 TND</div>
+        <div class="kpi-delta" id="kpiRevenueDelta">-</div>
+      </div>
+      <div class="card" style="box-shadow:none; border:1px solid var(--border);">
+        <p style="font-size:.75rem; color:var(--muted); font-weight:600;">PRODUITS DÉTENUS (moy.)</p>
+        <div class="kpi-value" id="kpiProducts">0</div>
+        <div class="kpi-delta" id="kpiProductsDelta">-</div>
+      </div>
+      <div class="card" style="box-shadow:none; border:1px solid var(--border);">
+        <p style="font-size:.75rem; color:var(--muted); font-weight:600;">ASSURANCE VIE</p>
+        <div class="kpi-value" id="kpiLifeIns">0%</div>
+        <div class="kpi-delta" id="kpiLifeInsDelta">-</div>
+      </div>
+    </div>
+    <div id="dataStatus" style="margin-top:1rem; font-size:.9rem; color:var(--muted);"></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Card 2: Segment Size (Doughnut)                              -->
+  <!-- ============================================================ -->
+  <section class="card col-4">
+    <h2>Taille des Segments</h2>
+    <p class="subtitle">Répartition de la clientèle</p>
+    <div class="chart-wrap"><canvas id="segmentChart"></canvas></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Card 3: Trend (Line Chart)                                   -->
+  <!-- ============================================================ -->
+  <section class="card col-4">
+    <h2>Évolution des Dépenses
+      <select id="trendSegmentSelect" onchange="updateTrend()" style="margin-left:auto; width:auto; padding:.3rem .5rem; font-size:.75rem;">
+        <!-- populated by JS -->
+      </select>
+    </h2>
+    <p class="subtitle">Dépenses mensuelles moyennes par trimestre</p>
+    <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Card 4: Adoption (Bar Chart)                                 -->
+  <!-- ============================================================ -->
+  <section class="card col-4">
+    <h2>Adoption Produits
+      <select id="adoptionSegmentSelect" onchange="updateAdoption()" style="margin-left:auto; width:auto; padding:.3rem .5rem; font-size:.75rem;">
+        <!-- populated by JS -->
+      </select>
+    </h2>
+    <p class="subtitle">Top produits détenus par segment</p>
+    <div class="chart-wrap"><canvas id="adoptionChart"></canvas></div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- Card 5: AI Agent + PDF Export                               -->
+  <!-- ============================================================ -->
+  <section class="card col-12">
+    <h2>🤖 Agent IA d'Innovation Produit</h2>
+    <p class="subtitle">Obtenez des recommandations stratégiques personnalisées par segment.</p>
+
+    <div class="row flex-end">
+      <div class="field" style="margin-bottom:0;">
+        <label>Segment cible</label>
+        <select id="aiSegment">
+          <!-- populated by JS -->
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0; flex: 1.5;">
+        <label>📈 Croissance simulée (%) <span class="help-icon" title="Taux de croissance projeté pour ce segment sur les 6 prochains mois. L'IA adaptera ses recommandations.">?</span></label>
+        <input type="number" id="growthSim" placeholder="ex: 25" step="5" value="0" />
+      </div>
+      <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+        <button class="btn btn-primary" id="genBtn" onclick="generateRecommendation()">✨ Générer</button>
+        <button class="btn btn-pdf" id="pdfBtn" onclick="exportPDF()" disabled>📄 Exporter PDF</button>
+      </div>
+    </div>
+    <p class="info-tip">💡 L'agent analyse le segment et propose un produit, une modification, un partenariat, une justification financière (ROI, CLV) et un plan d'action.</p>
+
+    <div id="aiOutput" class="ai-response"></div>
+  </section>
+
+</main>
+
+<footer>© 2026 Agent d'Innovation Produit Bancaire — Démo stratégique</footer>
+
+<script>
+  // ================================================================
+  //  GLOBALS & HELPERS
+  // ================================================================
+  const SEGMENT_MAP = {
+    'YoungProfessional': 'Jeunes Actifs',
+    'FamilyWithChildren': 'Familles avec Enfants',
+    'EmptyNester': 'Nids Vides',
+    'HighNetWorth': 'Haute Valeur Nette',
+    'Entrepreneur': 'Entrepreneurs',
+    'Student': 'Étudiants',
+    'Retiree': 'Retraités'
+  };
+  const SEGMENT_CODES = Object.keys(SEGMENT_MAP);
+  const SEGMENT_LABELS = Object.values(SEGMENT_MAP);
+
+  const COLORS = ['#1A2A4A', '#E32227', '#3B82F6', '#F39C12', '#27AE60', '#8B5CF6', '#EC4899'];
+
+  let segmentChart = null, trendChart = null, adoptionChart = null;
+  let currentSegment = 'YoungProfessional'; // default
+
+  // ================================================================
+  //  THEME TOGGLE
+  // ================================================================
+  function toggleTheme() {
+    document.body.classList.toggle('dark');
+    const btn = document.querySelector('.theme-toggle');
+    btn.textContent = document.body.classList.contains('dark') ? '☀️ Mode clair' : '🌙 Mode sombre';
+    refreshCharts();
+  }
+
+  function chartTextColor() {
+    return document.body.classList.contains('dark') ? '#E8EEF9' : '#2C3E50';
+  }
+  function chartGridColor() {
+    return document.body.classList.contains('dark') ? 'rgba(255,255,255,.08)' : 'rgba(0,0,0,.06)';
+  }
+
+  // ================================================================
+  //  POPULATE DROPDOWNS
+  // ================================================================
+  function populateDropdowns() {
+    const selects = ['trendSegmentSelect', 'adoptionSegmentSelect', 'aiSegment'];
+    selects.forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      sel.innerHTML = '';
+      SEGMENT_CODES.forEach(code => {
+        const opt = document.createElement('option');
+        opt.value = code;
+        opt.textContent = SEGMENT_MAP[code];
+        if (code === 'YoungProfessional') opt.selected = true;
+        sel.appendChild(opt);
+      });
+    });
+  }
+  populateDropdowns();
+
+  // ================================================================
+  //  DATA GENERATION
+  // ================================================================
+  async function generateData() {
+    const n = parseInt(document.getElementById('clientCount').value) || 150;
+    document.getElementById('dataStatus').textContent = '⏳ Génération en cours...';
+    document.querySelector('#dataStatus').style.color = 'var(--muted)';
+    try {
+      const res = await fetch('/generate-data/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ num_customers: n })
+      });
+      const data = await res.json();
+      if (data.status === 'success') {
+        document.getElementById('dataStatus').textContent = '✅ ' + data.message;
+        document.querySelector('#dataStatus').style.color = 'var(--success)';
+        await Promise.all([loadAnalysis(), loadTrend(), loadAdoption()]);
+        updateKPIs();
+      } else {
+        document.getElementById('dataStatus').textContent = '❌ Erreur : ' + (data.error || 'inconnue');
+        document.querySelector('#dataStatus').style.color = 'var(--red)';
+      }
+    } catch (e) {
+      document.getElementById('dataStatus').textContent = '❌ Erreur réseau : ' + e.message;
+      document.querySelector('#dataStatus').style.color = 'var(--red)';
+    }
+  }
+
+  // ================================================================
+  //  LOAD ANALYSIS (segment size and spending)
+  // ================================================================
+  async function loadAnalysis() {
+    try {
+      const res = await fetch('/analysis/');
+      const data = await res.json();
+      // data: { segments: [...], counts: [...], spending: [...], quarter: '2025-Q4' }
+
+      // Segment chart (doughnut)
+      const ctx = document.getElementById('segmentChart').getContext('2d');
+      if (segmentChart) segmentChart.destroy();
+      segmentChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: data.segments.map(s => SEGMENT_MAP[s] || s),
+          datasets: [{ data: data.counts, backgroundColor: COLORS.slice(0, data.segments.length), borderWidth: 0 }]
+        },
+        options: {
+          plugins: { legend: { position: 'bottom', labels: { color: chartTextColor(), font: { size: 11 } } } },
+          maintainAspectRatio: false
+        }
+      });
+
+      // Also update KPIs for the default segment
+      const defaultSeg = 'YoungProfessional';
+      const idx = data.segments.indexOf(defaultSeg);
+      if (idx !== -1) {
+        document.getElementById('kpiTotal').textContent = data.counts[idx].toLocaleString('fr-FR');
+        document.getElementById('kpiRevenue').textContent = data.spending[idx].toLocaleString('fr-FR') + ' TND';
+      }
+      // other KPIs will be updated by updateKPIs after we have more data
+      return data;
+    } catch (e) {
+      console.error('loadAnalysis error:', e);
+    }
+  }
+
+  // ================================================================
+  //  LOAD TREND
+  // ================================================================
+  async function loadTrend(segment) {
+    const seg = segment || document.getElementById('trendSegmentSelect').value;
+    try {
+      const res = await fetch(`/segment-trend/?segment=${seg}`);
+      const data = await res.json(); // [ { quarter: '2025-Q1', value: 1234 }, ... ]
+      const labels = data.map(d => d.quarter);
+      const values = data.map(d => d.value);
+
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      if (trendChart) trendChart.destroy();
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Dépenses mensuelles moyennes (TND)',
+            data: values,
+            borderColor: '#E32227',
+            backgroundColor: 'rgba(227,34,39,.1)',
+            tension: .4,
+            fill: true,
+            pointBackgroundColor: '#E32227'
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: chartTextColor() } }
+          },
+          scales: {
+            x: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
+            y: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+          }
+        }
+      });
+    } catch (e) { console.error('loadTrend error:', e); }
+  }
+
+  // ================================================================
+  //  LOAD ADOPTION
+  // ================================================================
+  async function loadAdoption(segment) {
+    const seg = segment || document.getElementById('adoptionSegmentSelect').value;
+    try {
+      const res = await fetch(`/segment-adoption/?segment=${seg}`);
+      const data = await res.json(); // { "Product A": 45.2, "Product B": 30.1, ... }
+      const labels = Object.keys(data);
+      const values = Object.values(data);
+
+      const ctx = document.getElementById('adoptionChart').getContext('2d');
+      if (adoptionChart) adoptionChart.destroy();
+      adoptionChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Adoption (%)',
+            data: values,
+            backgroundColor: '#1A2A4A',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: chartTextColor(), font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() }, max: 100 }
+          }
+        }
+      });
+    } catch (e) { console.error('loadAdoption error:', e); }
+  }
+
+  // ================================================================
+  //  UPDATE KPI CARDS
+  // ================================================================
+  async function updateKPIs() {
+    try {
+      const res = await fetch('/analysis/');
+      const data = await res.json();
+      const seg = 'YoungProfessional';
+      const idx = data.segments.indexOf(seg);
+      if (idx === -1) return;
+      // We need additional stats – we can fetch segment stats from recommendations endpoint?
+      // We'll just use existing data for now.
+    } catch (e) {}
+  }
+
+  // ================================================================
+  //  REFRESH CHARTS (theme change)
+  // ================================================================
+  function refreshCharts() {
+    if (segmentChart) {
+      segmentChart.options.plugins.legend.labels.color = chartTextColor();
+      segmentChart.update();
+    }
+    if (trendChart) {
+      trendChart.options.plugins.legend.labels.color = chartTextColor();
+      trendChart.options.scales.x.ticks.color = chartTextColor();
+      trendChart.options.scales.y.ticks.color = chartTextColor();
+      trendChart.options.scales.x.grid.color = chartGridColor();
+      trendChart.options.scales.y.grid.color = chartGridColor();
+      trendChart.update();
+    }
+    if (adoptionChart) {
+      adoptionChart.options.scales.x.ticks.color = chartTextColor();
+      adoptionChart.options.scales.y.ticks.color = chartTextColor();
+      adoptionChart.options.scales.y.grid.color = chartGridColor();
+      adoptionChart.update();
+    }
+  }
+
+  // ================================================================
+  //  WRAPPER FUNCTIONS FOR CHARTS (triggered by dropdowns)
+  // ================================================================
+  function updateTrend() {
+    const seg = document.getElementById('trendSegmentSelect').value;
+    loadTrend(seg);
+  }
+  function updateAdoption() {
+    const seg = document.getElementById('adoptionSegmentSelect').value;
+    loadAdoption(seg);
+  }
+
+  // ================================================================
+  //  AI RECOMMENDATION
+  // ================================================================
+  async function generateRecommendation() {
+    const segment = document.getElementById('aiSegment').value;
+    const growth = document.getElementById('growthSim').value || 0;
+    const btn = document.getElementById('genBtn');
+    const output = document.getElementById('aiOutput');
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Analyse en cours...';
+    output.style.display = 'block';
+    output.innerHTML = '<p>🤔 L\'IA réfléchit...</p>';
+
+    try {
+      const url = `/recommendations/?segment=${segment}&growth_simulator=${growth}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      // Enable PDF button
+      document.getElementById('pdfBtn').disabled = false;
+      // Store segment for PDF
+      window._pdfSegment = segment;
+
+      const rec = data.recommendations || {};
+      // Build structured HTML
+      let html = `
+        <h3><span class="icon">🔍</span>1. INTERPRÉTATION STRATÉGIQUE</h3>
+        <p>${rec.trend_interpretation || 'Non disponible'}</p>
+
+        <h3><span class="icon">💡</span>2. NOUVEAU PRODUIT</h3>
+        <p>${rec.product || 'Non disponible'}</p>
+
+        <h3><span class="icon">🔧</span>3. MODIFICATION DE PRODUIT</h3>
+        <p>${rec.modification || 'Non disponible'}</p>
+
+        <h3><span class="icon">🤝</span>4. PARTENARIAT</h3>
+        <p>${rec.partnership || 'Non disponible'}</p>
+
+        <h3><span class="icon">💰</span>5. JUSTIFICATION MÉTIER</h3>
+        <p>${rec.justification || 'Non disponible'}</p>
+
+        <h3><span class="icon">📅</span>6. PLAN DE DÉPLOIEMENT</h3>
+        <p>${rec.roadmap || 'Non disponible'}</p>
+
+        <h3><span class="icon">⚠️</span>RISQUES</h3>
+        <p>${rec.risks || 'Non disponible'}</p>
+      `;
+      if (data.explanation) {
+        html += `<p style="margin-top:1rem; font-size:.8rem; color:var(--muted);">🔍 ${data.explanation}</p>`;
+      }
+      output.innerHTML = html;
+
+    } catch (e) {
+      output.innerHTML = `<p style="color:var(--red);">❌ Erreur lors de la génération : ${e.message}</p>`;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '✨ Générer';
+    }
+  }
+
+  // ================================================================
+  //  PDF EXPORT
+  // ================================================================
+  function exportPDF() {
+    const segment = window._pdfSegment || document.getElementById('aiSegment').value;
+    if (!segment) {
+      alert('Veuillez d\'abord générer des recommandations.');
+      return;
+    }
+    // Open in new tab
+    window.open(`/report/pdf/?segment=${segment}`, '_blank');
+  }
+
+  // ================================================================
+  //  INIT
+  // ================================================================
+  // Load initial data
+  (async function init() {
+    await generateData(); // this will generate default data and load charts
+    // Also load trend and adoption for default segment
+    await loadTrend('YoungProfessional');
+    await loadAdoption('YoungProfessional');
+  })();
+
+</script>
+</body>
+</html>
