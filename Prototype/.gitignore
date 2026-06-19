@@ -1,0 +1,13 @@
+# Ignore Python virtual environment
+Prototype/prototype/Lib/
+Prototype/prototype/Scripts/
+Prototype/prototype/share/
+Prototype/prototype/pyvenv.cfg
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore Jupyter temporary files
+.ipynb_checkpoints/
+*.ipynb
